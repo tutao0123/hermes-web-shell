@@ -1,0 +1,29 @@
+{
+  "targets": [
+    {
+      "output": "phone-01-hello.png",
+      "parts": [
+        "phone-01-hello.png.b64.part00",
+        "phone-01-hello.png.b64.part01",
+        "phone-01-hello.png.b64.part02"
+      ]
+    },
+    {
+      "output": "phone-02-greetings.png",
+      "parts": [
+        "phone-02-greetings.png.b64.part00",
+        "phone-02-greetings.png.b64.part01"
+      ]
+    },
+    {
+      "output": "phone-03-workspaces.png",
+      "parts": [
+        "phone-03-workspaces.png.b64.part00",
+        "phone-03-workspaces.png.b64.part01",
+        "phone-03-workspaces.png.b64.part02",
+        "phone-03-workspaces.png.b64.part03",
+        "phone-03-workspaces.png.b64.part04"
+      ]
+    }
+  ]
+}
