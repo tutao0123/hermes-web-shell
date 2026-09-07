@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'docs/screenshots/*.b64'
+      - 'docs/screenshots/B64_MANIFEST.txt'
+      - 'docs/screenshots/*.b64.part*'
 
 permissions:
   contents: write
@@ -14,16 +16,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Decode .b64 to PNG and remove sidecars
+      - name: Assemble parts or decode whole b64
         run: |
           set -euo pipefail
+          cd docs/screenshots
           shopt -s nullglob
-          files=(docs/screenshots/*.b64)
-          if [ ${#files[@]} -eq 0 ]; then
-            echo "No .b64 files"
-            exit 0
+          if [ -f B64_MANIFEST.txt ]; then
+            while read -r out parts; do
+              [ -z "${out:-}" ] && continue
+              echo "Building $out from parts"
+              : > "$out.b64"
+              for p in $parts; do
+                cat "$p" >> "$out.b64"
+              done
+              base64 -d "$out.b64" > "$out"
+              magic=$(xxd -p -l 8 "$out")
+              echo "magic=$magic size=$(wc -c < "$out")"
+              test "$magic" = "89504e470d0a1a0a"
+              rm -f "$out.b64" $parts
+            done < B64_MANIFEST.txt
+            rm -f B64_MANIFEST.txt
           fi
-          for f in "${files[@]}"; do
+          for f in *.b64; do
+            [ -e "$f" ] || continue
             out="${f%.b64}"
             echo "Decoding $f -> $out"
             base64 -d "$f" > "$out"
