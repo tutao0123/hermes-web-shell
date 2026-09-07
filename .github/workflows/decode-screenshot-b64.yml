@@ -14,47 +14,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Assemble parts and decode PNGs
+      - name: Decode whole .b64 files to PNG
         run: |
           set -euo pipefail
           cd docs/screenshots
-          if [ ! -f B64_MANIFEST.txt ]; then
-            echo "No manifest"
-            exit 0
+          shopt -s nullglob
+          files=(*.b64)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No .b64 files"
+            exit 1
           fi
-          while read -r out parts; do
-            [ -z "${out:-}" ] && continue
-            missing=0
-            for p in $parts; do
-              if [ ! -f "$p" ]; then
-                echo "Missing $p"
-                missing=1
-              fi
-            done
-            if [ "$missing" -ne 0 ]; then
-              echo "Incomplete set for $out; abort"
-              exit 1
-            fi
-            echo "Building $out"
-            : > "$out.b64"
-            for p in $parts; do
-              tr -d '\n\r' < "$p" >> "$out.b64"
-            done
-            base64 -d "$out.b64" > "$out"
+          for f in "${files[@]}"; do
+            out="${f%.b64}"
+            echo "Decoding $f -> $out"
+            tr -d '\n\r ' < "$f" | base64 -d > "$out"
             magic=$(xxd -p -l 8 "$out")
             echo "magic=$magic size=$(wc -c < "$out")"
             test "$magic" = "89504e470d0a1a0a"
-            rm -f "$out.b64" $parts
-          done < B64_MANIFEST.txt
-          rm -f B64_MANIFEST.txt B64_READY
-      - name: Commit PNGs and cleanup workflow
+            rm -f "$f"
+          done
+          # cleanup any leftover parts/manifest/ready
+          rm -f B64_MANIFEST.txt B64_READY *.b64.part* || true
+      - name: Commit PNGs and remove helper workflow
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/screenshots/*.png 2>/dev/null || true
           git add -u docs/screenshots/ || true
-          # remove decode workflow after success
           git rm -f .github/workflows/decode-screenshot-b64.yml || true
           if git diff --cached --quiet; then
             echo "Nothing to commit"
