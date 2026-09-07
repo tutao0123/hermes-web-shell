@@ -1,4 +1,6 @@
 import type { ChatBlock, ChatSession, Task, TaskStatus, Workspace } from '../types'
+import { LOCALE_STORAGE_KEY } from '../constants'
+import type { Locale } from '../i18n/messages'
 import { mockHermesAdapter as mockAdapter } from './MockHermesAdapter'
 
 export interface HermesStatus {
@@ -23,24 +25,40 @@ interface ApiSession {
   status: TaskStatus
 }
 
+function readLocale(): Locale {
+  try {
+    const v = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (v === 'en' || v === 'zh') return v
+  } catch {
+    /* ignore */
+  }
+  return 'zh'
+}
+
+function sessionsUrl(): string {
+  const locale = readLocale()
+  return `/api/hermes/sessions?locale=${locale}`
+}
+
 function workspaceIdFromCwd(cwd: string): string {
-  // stable, URL-safe id from path
   return `ws-${btoa(unescape(encodeURIComponent(cwd)))
     .replace(/=+$/g, '')
     .replace(/\+/g, '-')
     .replace(/\//g, '_')}`
 }
 
-function workspaceName(cwd: string): string {
+function workspaceName(cwd: string, locale: Locale): string {
   const parts = cwd.replace(/\/+$/, '').split('/').filter(Boolean)
-  return parts[parts.length - 1] || cwd || '本机 Hermes'
+  const leaf = parts[parts.length - 1] || cwd
+  if (leaf) return leaf
+  return locale === 'en' ? 'Local Hermes' : 'Local Hermes ZH'
 }
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init)
   const data = (await res.json().catch(() => ({}))) as T & { error?: string }
   if (!res.ok) {
-    throw new Error(data.error || `请求失败 (${res.status})`)
+    throw new Error(data.error || `request failed (${res.status})`)
   }
   return data
 }
@@ -58,33 +76,25 @@ export class HermesAdapter {
       return s
     } catch {
       this.useMock = true
-      return {
-        version: 'mock',
-        model: 'mock-hermes',
-        modelFull: 'mock-hermes',
-      }
+      return { version: 'mock', model: 'mock-hermes', modelFull: 'mock-hermes' }
     }
   }
 
   async listWorkspaces(): Promise<Workspace[]> {
+    const locale = readLocale()
     try {
-      const { sessions } = await fetchJson<{ sessions: ApiSession[] }>(
-        '/api/hermes/sessions',
-      )
+      const { sessions } = await fetchJson<{ sessions: ApiSession[] }>(sessionsUrl())
       this.useMock = false
       if (sessions.length === 0) {
-        return [
-          {
-            id: 'ws-local-hermes',
-            name: '本机 Hermes',
-            kind: 'local',
-            path: '~/.hermes',
-            updatedAt: '刚刚',
-            taskIds: [],
-          },
-        ]
+        return [{
+          id: 'ws-local-hermes',
+          name: locale === 'en' ? 'Local Hermes' : 'Local Hermes ZH',
+          kind: 'local',
+          path: '~/.hermes',
+          updatedAt: locale === 'en' ? 'just now' : 'just now',
+          taskIds: [],
+        }]
       }
-
       const byCwd = new Map<string, ApiSession[]>()
       for (const s of sessions) {
         const cwd = s.cwd || '/workspace'
@@ -92,16 +102,15 @@ export class HermesAdapter {
         list.push(s)
         byCwd.set(cwd, list)
       }
-
       const workspaces: Workspace[] = []
       for (const [cwd, list] of byCwd) {
         const newest = list[0]
         workspaces.push({
           id: workspaceIdFromCwd(cwd),
-          name: workspaceName(cwd),
+          name: workspaceName(cwd, locale),
           kind: 'local',
           path: cwd,
-          updatedAt: newest?.updatedAt ?? '未知',
+          updatedAt: newest?.updatedAt ?? (locale === 'en' ? 'unknown' : 'unknown'),
           taskIds: list.map((s) => s.id),
         })
       }
@@ -114,9 +123,7 @@ export class HermesAdapter {
 
   async listTasks(workspaceId?: string): Promise<Task[]> {
     try {
-      const { sessions } = await fetchJson<{ sessions: ApiSession[] }>(
-        '/api/hermes/sessions',
-      )
+      const { sessions } = await fetchJson<{ sessions: ApiSession[] }>(sessionsUrl())
       this.useMock = false
       const tasks: Task[] = sessions.map((s) => ({
         id: s.id,
@@ -125,9 +132,7 @@ export class HermesAdapter {
         status: s.status,
         updatedAt: s.updatedAt,
       }))
-      return workspaceId
-        ? tasks.filter((t) => t.workspaceId === workspaceId)
-        : tasks
+      return workspaceId ? tasks.filter((t) => t.workspaceId === workspaceId) : tasks
     } catch {
       this.useMock = true
       return mockAdapter.listTasks(workspaceId)
@@ -137,10 +142,7 @@ export class HermesAdapter {
   async getChat(taskId: string): Promise<ChatSession> {
     if (this.useMock) return mockAdapter.getChat(taskId)
     try {
-      const data = await fetchJson<ChatSession>(
-        `/api/hermes/sessions/${encodeURIComponent(taskId)}`,
-      )
-      return data
+      return await fetchJson<ChatSession>(`/api/hermes/sessions/${encodeURIComponent(taskId)}`)
     } catch {
       return mockAdapter.getChat(taskId)
     }
@@ -148,41 +150,30 @@ export class HermesAdapter {
 
   async sendMessage(taskId: string, content: string): Promise<ChatBlock[]> {
     if (this.useMock) return mockAdapter.sendMessage(taskId, content)
-
-    const user: ChatBlock = {
-      kind: 'user',
-      id: `u-${Date.now()}`,
-      content,
-    }
-
+    const user: ChatBlock = { kind: 'user', id: `u-${Date.now()}`, content }
     try {
-      const result = await fetchJson<{
-        reply: string
-        sessionId: string
-        raw?: string
-      }>('/api/hermes/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: taskId || undefined,
-          message: content,
-        }),
-      })
-
+      const result = await fetchJson<{ reply: string; sessionId: string; raw?: string }>(
+        '/api/hermes/chat',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: taskId || undefined, message: content }),
+        },
+      )
       const reply: ChatBlock = {
         kind: 'text',
         id: `a-${Date.now()}`,
         role: 'assistant',
-        content: result.reply || '（无文本回复）',
+        content: result.reply || '(empty reply)',
       }
       return [user, reply]
     } catch (e) {
-      const msg = e instanceof Error ? e.message : '发送失败'
+      const msg = e instanceof Error ? e.message : 'send failed'
       const reply: ChatBlock = {
         kind: 'text',
         id: `err-${Date.now()}`,
         role: 'assistant',
-        content: `⚠️ ${msg}`,
+        content: `WARN ${msg}`,
       }
       return [user, reply]
     }
