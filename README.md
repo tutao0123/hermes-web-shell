@@ -86,11 +86,47 @@ cloudflared tunnel --url http://127.0.0.1:5174
 - 密码门禁（`demo`）**仅用于演示**，不是生产级鉴权；公网暴露时请自行加固（反向代理鉴权、VPN、关闭公网等）。
 - 本壳可调用本机 `hermes` 并读取本机会话库，请只在可信网络使用。
 
+
+## Screenshots
+
+### Phone (live demo)
+
+![Phone hello chat](docs/screenshots/phone-01-hello.png)
+
+![Phone greetings session](docs/screenshots/phone-02-greetings.png)
+
+![Phone workspaces](docs/screenshots/phone-03-workspaces.png)
+
+### Desktop — Chinese (ZH)
+
+![Login CN](docs/screenshots/01-login.png)
+
+![Workspaces CN](docs/screenshots/02-workspaces.png)
+
+![Chat CN](docs/screenshots/03-chat.png)
+
+![Workspaces dark CN](docs/screenshots/04-workspaces-dark.png)
+
+### Desktop — English (EN)
+
+![Login EN](docs/screenshots/en-01-login.png)
+
+![Workspaces EN](docs/screenshots/en-02-workspaces.png)
+
+![Chat EN](docs/screenshots/en-03-chat.png)
+
+![Workspaces dark EN](docs/screenshots/en-04-workspaces-dark.png)
+
+
 ## 许可
 
 [MIT](./LICENSE) © 2026 Tao
 
 ---
+
+## Screenshots (EN)
+
+Phone and desktop galleries live under [Screenshots](#screenshots): `phone-01-hello.png`, `phone-02-greetings.png`, `phone-03-workspaces.png`, plus ZH/EN desktop captures in `docs/screenshots/`.
 
 ## English (short)
 
