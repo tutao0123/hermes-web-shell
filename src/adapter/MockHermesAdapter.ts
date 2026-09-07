@@ -1,24 +1,71 @@
-import { chatSessions, tasks, workspaces } from '../data/mock'
+import { getMockBundle } from '../data/mock'
+import { LOCALE_STORAGE_KEY } from '../constants'
+import type { Locale } from '../i18n/messages'
 import type { ChatBlock, ChatSession, Task, Workspace } from '../types'
+
+function readLocale(): Locale {
+  try {
+    const v = localStorage.getItem(LOCALE_STORAGE_KEY)
+    if (v === 'en' || v === 'zh') return v
+  } catch {
+    /* ignore */
+  }
+  return 'zh'
+}
 
 /** Offline fallback when `/api/hermes` is unreachable */
 export class MockHermesAdapter {
+  private sessionsByLocale: Partial<Record<Locale, Record<string, ChatSession>>> =
+    {}
+
+  private locale(): Locale {
+    return readLocale()
+  }
+
+  private bundle(locale?: Locale) {
+    return getMockBundle(locale ?? this.locale())
+  }
+
+  private sessions(locale?: Locale): Record<string, ChatSession> {
+    const loc = locale ?? this.locale()
+    if (!this.sessionsByLocale[loc]) {
+      this.sessionsByLocale[loc] = this.bundle(loc).chatSessions
+    }
+    return this.sessionsByLocale[loc]!
+  }
+
   async listWorkspaces(): Promise<Workspace[]> {
     await delay(80)
-    return structuredClone(workspaces)
+    return this.bundle().workspaces
   }
 
   async listTasks(workspaceId?: string): Promise<Task[]> {
     await delay(60)
-    const all = structuredClone(tasks)
+    const all = this.bundle().tasks
     return workspaceId ? all.filter((t) => t.workspaceId === workspaceId) : all
   }
 
   async getChat(taskId: string): Promise<ChatSession> {
     await delay(60)
-    const session = chatSessions[taskId]
+    const locale = this.locale()
+    const session = this.sessions(locale)[taskId]
     if (session) return structuredClone(session)
-    const task = tasks.find((t) => t.id === taskId)
+    const task = this.bundle(locale).tasks.find((t) => t.id === taskId)
+    if (locale === 'en') {
+      return {
+        taskId,
+        blocks: [
+          {
+            kind: 'text',
+            id: `${taskId}-empty`,
+            role: 'assistant',
+            content: task
+              ? `Task "${task.title}" has no detailed session log (offline demo).`
+              : 'Session not found for this task.',
+          },
+        ],
+      }
+    }
     return {
       taskId,
       blocks: [
@@ -36,6 +83,7 @@ export class MockHermesAdapter {
 
   async sendMessage(taskId: string, content: string): Promise<ChatBlock[]> {
     await delay(120)
+    const locale = this.locale()
     const user: ChatBlock = {
       kind: 'user',
       id: `u-${Date.now()}`,
@@ -45,9 +93,12 @@ export class MockHermesAdapter {
       kind: 'text',
       id: `a-${Date.now()}`,
       role: 'assistant',
-      content: `（离线 Mock）已收到：「${content}」。请确认本机 Hermes API 可用。`,
+      content:
+        locale === 'en'
+          ? `(Offline mock) Got it: "${content}". Please confirm the local Hermes API is available.`
+          : `（离线 Mock）已收到：「${content}」。请确认本机 Hermes API 可用。`,
     }
-    const existing = chatSessions[taskId]
+    const existing = this.sessions(locale)[taskId]
     if (existing) {
       existing.blocks.push(user, reply)
     }
