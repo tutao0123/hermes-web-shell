@@ -1,39 +1,23 @@
 name: Decode screenshot base64
 
+# Run only after all parts have been uploaded. Ordinary screenshot commits
+# should contain the original PNG files and do not need this workflow.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/screenshots/**'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   decode:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Validate and decode complete screenshots
+        run: python3 scripts/decode_screenshots.py
+      - name: Download decoded PNGs
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Assemble and decode b64 to PNG
-        run: |
-          set -euo pipefail
-          cd docs/screenshots
-          echo 'CmltcG9ydCBqc29uLCBwYXRobGliLCBnbG9iLCBvcywgYmFzZTY0CnJvb3QgPSBwYXRobGliLlBhdGgoIi4iKQppZiAocm9vdCAvICJNQU5JRkVTVC5qc29uIikuZXhpc3RzKCk6CiAgICBtID0ganNvbi5sb2Fkcygocm9vdCAvICJNQU5JRkVTVC5qc29uIikucmVhZF90ZXh0KCkpCiAgICBmb3IgdCBpbiBtLmdldCgidGFyZ2V0cyIsIFtdKToKICAgICAgICBvdXQgPSB0WyJvdXRwdXQiXQogICAgICAgIGlmICJwYXJ0cyIgaW4gdDoKICAgICAgICAgICAgcGFydHMgPSB0WyJwYXJ0cyJdCiAgICAgICAgICAgIHByaW50KGYiQXNzZW1ibGluZyB7b3V0fSBmcm9tIHtsZW4ocGFydHMpfSBwYXJ0cyIpCiAgICAgICAgICAgIGRhdGEgPSAiIi5qb2luKAogICAgICAgICAgICAgICAgcGF0aGxpYi5QYXRoKHApLnJlYWRfdGV4dCgpLnJlcGxhY2UoIlxuIiwgIiIpLnJlcGxhY2UoIlxyIiwgIiIpLnJlcGxhY2UoIiAiLCAiIikKICAgICAgICAgICAgICAgIGZvciBwIGluIHBhcnRzCiAgICAgICAgICAgICkKICAgICAgICAgICAgcGF0aGxpYi5QYXRoKG91dCArICIuYjY0Iikud3JpdGVfdGV4dChkYXRhKQogICAgICAgIGVsaWYgImI2NCIgaW4gdDoKICAgICAgICAgICAgcHJpbnQoIldob2xlIGZpbGUgZm9yIHt9OiB7fSIuZm9ybWF0KG91dCwgdFsiYjY0Il0pKQpwYXJ0X2ZpbGVzID0gc29ydGVkKGdsb2IuZ2xvYigiKi5iNjQucGFydCoiKSkKYmFzZXMgPSBzb3J0ZWQoe3AucnNwbGl0KCIuYjY0LnBhcnQiLCAxKVswXSBmb3IgcCBpbiBwYXJ0X2ZpbGVzfSkKZm9yIGJhc2UgaW4gYmFzZXM6CiAgICBiNjRwYXRoID0gYmFzZSArICIuYjY0IgogICAgaWYgbm90IG9zLnBhdGguZXhpc3RzKGI2NHBhdGgpOgogICAgICAgIHBhcnRzID0gc29ydGVkKGdsb2IuZ2xvYihiYXNlICsgIi5iNjQucGFydCoiKSkKICAgICAgICBwcmludChmIkFzc2VtYmxpbmcge2I2NHBhdGh9IGZyb20ge2xlbihwYXJ0cyl9IHBhcnRzIikKICAgICAgICBkYXRhID0gIiIuam9pbihvcGVuKHApLnJlYWQoKS5yZXBsYWNlKCJcbiIsIiIpLnJlcGxhY2UoIlxyIiwiIikucmVwbGFjZSgiICIsIiIpIGZvciBwIGluIHBhcnRzKQogICAgICAgIG9wZW4oYjY0cGF0aCwgInciKS53cml0ZShkYXRhKQpkZWNvZGVkID0gMApmb3IgZiBpbiBzb3J0ZWQoZ2xvYi5nbG9iKCIqLmI2NCIpKToKICAgIGlmICIuYjY0LnBhcnQiIGluIGY6CiAgICAgICAgY29udGludWUKICAgIG91dCA9IGZbOi00XQogICAgcHJpbnQoZiJEZWNvZGluZyB7Zn0gLT4ge291dH0iKQogICAgcmF3ID0gYmFzZTY0LmI2NGRlY29kZShvcGVuKGYpLnJlYWQoKS5yZXBsYWNlKCJcbiIsIiIpLnJlcGxhY2UoIlxyIiwiIikucmVwbGFjZSgiICIsIiIpKQogICAgb3BlbihvdXQsICJ3YiIpLndyaXRlKHJhdykKICAgIG1hZ2ljID0gcmF3Wzo4XS5oZXgoKQogICAgcHJpbnQoZiJtYWdpYz17bWFnaWN9IHNpemU9e2xlbihyYXcpfSIpCiAgICBhc3NlcnQgbWFnaWMgPT0gIjg5NTA0ZTQ3MGQwYTFhMGEiLCBtYWdpYwogICAgZGVjb2RlZCArPSAxCnByaW50KGYiRGVjb2RlZCB7ZGVjb2RlZH0gUE5HKHMpIikKYXNzZXJ0IGRlY29kZWQgPiAwCg==' | base64 -d > /tmp/decode_screenshots.py
-          python3 /tmp/decode_screenshots.py
-
-      - name: Commit and push PNGs
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/*.png
-          if git diff --cached --quiet; then
-            echo "Nothing to commit"
-            exit 0
-          fi
-          git commit -m "Add decoded phone screenshots"
-          git push
+          name: decoded-screenshots
+          path: docs/screenshots/*.png
+          if-no-files-found: error

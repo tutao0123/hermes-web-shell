@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { hermesAdapter } from './adapter/HermesAdapter'
-import { isAuthenticated, PasswordGate } from './components/PasswordGate'
 import { ChatPage } from './pages/ChatPage'
 import { TasksPage } from './pages/TasksPage'
 import { WorkspacesPage } from './pages/WorkspacesPage'
@@ -10,7 +9,8 @@ import './App.css'
 
 function App() {
   const { t } = useUiPrefs()
-  const [authed, setAuthed] = useState(() => isAuthenticated())
+  // The server authenticates the page and API before this bundle is served.
+  const authed = true
   const [view, setView] = useState<AppView>({ name: 'workspaces' })
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
@@ -52,9 +52,6 @@ function App() {
     return tasks.filter((t) => t.workspaceId === currentWorkspace.id)
   }, [currentWorkspace, tasks])
 
-  if (!authed) {
-    return <PasswordGate onUnlock={() => setAuthed(true)} />
-  }
 
   if (!ready) {
     return (

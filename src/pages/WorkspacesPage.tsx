@@ -53,7 +53,7 @@ export function WorkspacesPage({
             </div>
             <p className="subtitle">{t('workspaces.subtitle')}</p>
           </div>
-          <PrefsToggles />
+          <div><a href="/connect" className="icon-btn">连接手机</a><PrefsToggles /></div>
         </div>
       </header>
 
