@@ -5,14 +5,19 @@
       "parts": [
         "phone-01-hello.png.b64.part00",
         "phone-01-hello.png.b64.part01",
-        "phone-01-hello.png.b64.part02"
+        "phone-01-hello.png.b64.part02",
+        "phone-01-hello.png.b64.part03",
+        "phone-01-hello.png.b64.part04"
       ]
     },
     {
       "output": "phone-02-greetings.png",
       "parts": [
         "phone-02-greetings.png.b64.part00",
-        "phone-02-greetings.png.b64.part01"
+        "phone-02-greetings.png.b64.part01",
+        "phone-02-greetings.png.b64.part02",
+        "phone-02-greetings.png.b64.part03",
+        "phone-02-greetings.png.b64.part04"
       ]
     },
     {
