@@ -47,6 +47,8 @@ C:\Program Files (x86)\cloudflared\cloudflared.exe
 
 关于 token 的获取和轮换，参见 [Cloudflare Tunnel tokens](https://developers.cloudflare.com/tunnel/advanced/tunnel-tokens/)。
 
+![隧道 token 保存位置示意，凭证已隐藏](images/token-storage.svg)
+
 ## 3. 添加公开域名路由
 
 在隧道的路由页添加 **Published application（公开应用）** 路由；不同界面也可能显示为 Published application routes 或 Public Hostname。
@@ -64,6 +66,10 @@ C:\Program Files (x86)\cloudflared\cloudflared.exe
 手机使用 HTTPS；连接器转发到本机使用 HTTP，这是两段不同的连接。不要把本机服务填写为 HTTPS，也不要误填官方 Dashboard 的 `9119` 端口。
 
 保存时如果提示域名记录冲突，检查是否已有同名 DNS 记录或旧隧道路由，确认用途后再调整。无需在路由器映射 5174 端口。
+
+![Cloudflare 公开域名与 HTTP 本机服务字段示意](images/cloudflare-route.svg)
+
+> 这是字段填写示意，不是 Cloudflare 当前控制台截图；按钮位置可能随版本变化。
 
 ## 4. 告诉二维码使用哪个域名
 

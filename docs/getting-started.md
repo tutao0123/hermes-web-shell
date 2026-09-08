@@ -4,6 +4,8 @@
 
 完成后，你的日常操作就是：**电脑打开「连接手机」→ 手机扫码 → 继续 Hermes 会话**。安装和配置只需做一次，除非换电脑、换域名或重装环境。
 
+![首次配置与日常扫码流程](images/connection-flow.svg)
+
 ## 1. 准备电脑
 
 本指南以 Windows PowerShell 为例。准备：
@@ -86,6 +88,10 @@ powershell.exe -NoProfile -STA -File .\scripts\connect-phone.ps1
 ```
 
 如果系统策略限制脚本运行，请按自己设备或组织的允许方式处理；不要通过关闭系统防护解决。
+
+![本机二维码窗口操作示意，二维码已隐藏](images/phone-pairing.svg)
+
+> 请扫描自己电脑上生成的真实二维码。文档配图不可扫码。
 
 ## 6. 下次怎么使用
 
