@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { PrefsToggles } from '../components/PrefsToggles'
+import { HeaderSettings } from '../components/HeaderSettings'
 import { StatusPill } from '../components/StatusPill'
 import { useUiPrefs } from '../prefs/UiPrefs'
 import type { Task, Workspace } from '../types'
@@ -53,7 +53,7 @@ export function WorkspacesPage({
             </div>
             <p className="subtitle">{t('workspaces.subtitle')}</p>
           </div>
-          <div><a href="/connect" className="icon-btn">连接手机</a><PrefsToggles /></div>
+          <HeaderSettings />
         </div>
       </header>
 

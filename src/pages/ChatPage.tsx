@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { DesktopOverlay } from '../components/DesktopOverlay'
-import { PrefsToggles } from '../components/PrefsToggles'
+import { HeaderSettings } from '../components/HeaderSettings'
 import { hermesAdapter } from '../adapter/HermesAdapter'
 import { useUiPrefs } from '../prefs/UiPrefs'
 import type { ChatBlock, Task, Workspace } from '../types'
@@ -81,7 +81,7 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack, onSess
               <h1>{t('chat.sessionTitle')}</h1>
             </div>
           </div>
-          <PrefsToggles />
+          <HeaderSettings />
         </div>
         <div className="context-tabs">
           <span className="chip active">{task.title}</span>

@@ -1,4 +1,4 @@
-import { PrefsToggles } from '../components/PrefsToggles'
+import { HeaderSettings } from '../components/HeaderSettings'
 import { StatusPill } from '../components/StatusPill'
 import { useUiPrefs } from '../prefs/UiPrefs'
 import type { Task, Workspace } from '../types'
@@ -27,7 +27,7 @@ export function TasksPage({ workspace, tasks, onBack, onOpenTask, onNewSession }
               <p className="subtitle path">{workspace.path}</p>
             </div>
           </div>
-          <PrefsToggles />
+          <HeaderSettings />
         </div>
       </header>
 

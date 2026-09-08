@@ -49,6 +49,8 @@ export type MessageKey =
   | 'desktop.passwordPlaceholder'
   | 'desktop.loginDemo'
   | 'desktop.returnHint'
+  | 'prefs.settings'
+  | 'prefs.connectPhone'
   | 'prefs.localeZh'
   | 'prefs.localeEn'
   | 'prefs.themeLight'
@@ -106,6 +108,8 @@ const zh: Record<MessageKey, string> = {
   'desktop.passwordPlaceholder': '密码',
   'desktop.loginDemo': '登录（演示）',
   'desktop.returnHint': '完成后点击右上角「交还」返回会话。',
+  'prefs.settings': '设置',
+  'prefs.connectPhone': '连接手机 / 管理设备',
   'prefs.localeZh': '中文',
   'prefs.localeEn': 'EN',
   'prefs.themeLight': '亮',
@@ -165,6 +169,8 @@ const en: Record<MessageKey, string> = {
   'desktop.passwordPlaceholder': 'Password',
   'desktop.loginDemo': 'Sign in (demo)',
   'desktop.returnHint': 'When done, click “Return” in the top-right to go back.',
+  'prefs.settings': 'Settings',
+  'prefs.connectPhone': 'Connect phone / Manage devices',
   'prefs.localeZh': '中文',
   'prefs.localeEn': 'EN',
   'prefs.themeLight': 'Light',
