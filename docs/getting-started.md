@@ -1,20 +1,16 @@
-# 安装与扫码连接指南
+# Installation and phone pairing
 
-[返回首页](../README.md) · [Cloudflare 配置](cloudflare.md) · [常见问题](troubleshooting.md)
+[Home](../README.md) · [Cloudflare setup](cloudflare.md) · [Troubleshooting](troubleshooting.md)
 
-完成后，你的日常操作就是：**电脑打开「连接手机」→ 手机扫码 → 继续 Hermes 会话**。安装和配置只需做一次，除非换电脑、换域名或重装环境。
+After setup: **open the pairing window → scan with your phone → continue a conversation**.
 
-![首次配置与日常扫码流程](images/connection-flow.svg)
+![Setup and everyday pairing](images/connection-flow.svg)
 
-## 1. 准备电脑
+## 1. Prepare your computer
 
-本指南以 Windows PowerShell 为例。准备：
+This guide uses Windows PowerShell. Install [Hermes Agent](https://github.com/NousResearch/hermes-agent) and verify that chat works. Configure its model provider and network access first. Install [Node.js](https://nodejs.org/) 24 and [Git](https://git-scm.com/downloads), then open a new terminal.
 
-- 已安装并能正常聊天的 [Hermes Agent](https://github.com/NousResearch/hermes-agent)。先解决 Hermes 自身的模型和网络配置，再安装本应用。
-- [Node.js](https://nodejs.org/) 24 和 [Git](https://git-scm.com/downloads)。安装后重新打开终端。
-- Cloudflare 账号，以及已接入该账号的域名。示例使用 `hermes.example.com`，请全部换成你自己的域名。
-
-检查终端能够找到程序：
+You also need a Cloudflare account with a domain connected to it. Replace `hermes.example.com` throughout with your own hostname.
 
 ```powershell
 node --version
@@ -23,11 +19,11 @@ git --version
 hermes --help
 ```
 
-本项目没有要求安装官方 Hermes Desktop，也不需要额外配置 Hermes Gateway 才能配对。它读取本机数据并调用 Hermes CLI；Hermes 本身仍需正确安装。
+Hermes Desktop and a separate Hermes Gateway configuration are not required for pairing. This app reads local data and calls the Hermes CLI.
 
-## 2. 下载并安装依赖
+## 2. Install
 
-在你想保存项目的位置打开 PowerShell：
+Open PowerShell where you want to store the project:
 
 ```powershell
 git clone https://github.com/tutao0123/hermes-web-shell.git
@@ -37,97 +33,86 @@ Copy-Item .env.example .env.local
 notepad .env.local
 ```
 
-已有 `.env.local` 时不要再次覆盖它。保留文件中其他需要的设置，添加下面两行：
+Do not overwrite an existing `.env.local`. Keep your settings and add:
 
 ```dotenv
 SHELL_PUBLIC_URL=https://hermes.example.com
 VITE_ALLOWED_HOSTS=hermes.example.com
 ```
 
-这是项目配置文件，不是 PowerShell 命令。域名必须替换成你自己的地址，使用 HTTPS，不加 `/connect` 或其他路径。
+These are file entries, not PowerShell commands. Use your HTTPS domain without a path such as `/connect`.
 
-## 3. 先运行一次本机服务
+## 3. Run the service once
 
 ```powershell
 npm run dev
 ```
 
-服务默认监听 `http://127.0.0.1:5174`。先保留这个终端，用它完成首次初始化；随后启动器才能复用生成的配置目录和凭证。
-
-可以在电脑浏览器打开该地址检查页面。如果看到密码框，说明网页已能响应，**不用登录也可以继续配置手机连接**。需要电脑端聊天时，再使用下一节的访问密码。
-
-首次运行会在用户目录下创建 `.hermes-web-shell`，Windows 通常是：
+Keep this terminal open during initial setup. The first run initializes the credentials and directory needed by the launcher:
 
 ```text
-C:\Users\你的用户名\.hermes-web-shell\
+C:\Users\YOUR_USERNAME\.hermes-web-shell\
 ```
 
-## 4. 配置 Cloudflare
+Optionally visit `http://127.0.0.1:5174` on the computer. A password form confirms that the page responds. **You do not need to sign in to continue phone setup.**
 
-按照[手动配置 Cloudflare](cloudflare.md)完成以下三件事：
+## 4. Configure Cloudflare
 
-1. 创建隧道，并在这台运行 Hermes 的电脑上安装、运行连接器。
-2. 将自己的域名指向本机 `http://127.0.0.1:5174`。
-3. 如果希望启动器帮你启动隧道，将隧道 token 保存到指定的本地文件。
+Follow [Manual Cloudflare setup](cloudflare.md): create a tunnel, run its connector on this computer, and route your domain to `http://127.0.0.1:5174`. Save the token locally if the launcher should start the connector.
 
-检查：手机浏览器打开 `https://hermes.example.com`，应能看到 Hermes 登录页面。这一步只用来确认域名通了，**无需在手机手动输入密码**。
+Visit your HTTPS domain on your phone. The login page confirms connectivity; you do not need to type a password.
 
-## 5. 打开二维码窗口
+## 5. Scan to connect
 
-回到项目文件夹，双击 **`连接手机.vbs`**。窗口应直接显示二维码。
+Double-click **`连接手机.vbs`** ("Connect phone"). Scan the code with your phone camera and open it in a browser.
 
-- 扫描二维码，在手机浏览器中打开链接，即可登录。
-- 二维码 5 分钟有效，仅能使用一次；失效后点击「刷新二维码」。
-- 手机登录保留 30 天。清除网站数据、使用不同浏览器或被取消连接后，需要重新配对。
-- 可收藏自己的域名；已登录时不必每天扫码。
+- Codes expire after five minutes and work once. **刷新二维码** means "Refresh QR code."
+- Phone sessions last 30 days. Clearing site data, changing browsers, or revocation requires pairing again.
+- Bookmark your normal domain; scanning every day is unnecessary while signed in.
 
-如果双击没有反应，可在项目目录的 PowerShell 中运行以下命令查看错误：
+If double-clicking does nothing, run this from the project directory to see errors:
 
 ```powershell
 powershell.exe -NoProfile -STA -File .\scripts\connect-phone.ps1
 ```
 
-如果系统策略限制脚本运行，请按自己设备或组织的允许方式处理；不要通过关闭系统防护解决。
+If script execution is restricted, follow your device or organization's rules rather than disabling protections.
 
-![本机二维码窗口操作示意，二维码已隐藏](images/phone-pairing.svg)
+![Pairing window illustration with QR code hidden](images/phone-pairing.svg)
 
-> 请扫描自己电脑上生成的真实二维码。文档配图不可扫码。
+> Scan the real code on your computer. Documentation images cannot connect. Illustrations use English descriptions; the native window currently uses Chinese labels.
 
-## 6. 下次怎么使用
+## 6. Everyday use
 
-电脑重启后，双击 `连接手机.vbs`：
+After restarting the computer, double-click the launcher. It attempts to start the local service if needed, and the tunnel if cloudflared exists at its expected path, a token file exists, and no cloudflared process is running. If installed elsewhere or managed as a system service, keep the connector running separately.
 
-- 启动器会尝试启动尚未运行的本机 Web 服务。
-- 如果检测到默认位置的 cloudflared 和保存的 token，且没有 cloudflared 进程，会尝试启动隧道。
-- 如果 cloudflared 安装在其他位置或由系统服务管理，请自行保证它在运行。
+Closing the window does not stop services. Sleep, shutdown, or network loss interrupts access. Automatic startup at boot is not configured.
 
-关闭二维码窗口不等于停止服务。电脑睡眠、关机或网络断开时，手机将无法继续访问。当前版本没有自动开机运行功能。
+## Manage devices
 
-## 管理手机连接
+Click **已连接设备** ("Connected devices"), select a device, then **取消选中设备的连接** ("Disconnect selected device"). Its next request will be rejected until it pairs again.
 
-点击二维码窗口里的「已连接设备」，选中设备并取消连接。设备下次请求时会被拒绝，需要重新扫码。
+Labels describe device/browser categories and may repeat; check connection times. Signed-in browser users can also pair and revoke devices. This is not a multi-user system with separate roles.
 
-设备名称来自浏览器类别，同类手机可能重名；可以结合连接时间判断。已登录的网页用户同样能生成二维码和管理设备，这不是分权限的多用户系统。
+## Pair without the Windows window
 
-## 不使用 Windows 二维码窗口
+Keep the service and tunnel running. Open `https://hermes.example.com/connect`, sign in with the access password, then use **连接手机** ("Connect phone") to generate a code. Password sign-in returns to the home page first.
 
-保持本机 Web 服务和隧道运行，浏览器打开 `https://hermes.example.com/connect`，使用访问密码登录，再进入「连接手机」生成二维码。首次网页登录后会返回首页。
-
-默认访问密码保存在 `~/.hermes-web-shell/access-password.txt`。Windows 可用记事本打开：
+The password is in `~/.hermes-web-shell/access-password.txt`. On Windows:
 
 ```powershell
 notepad "$env:USERPROFILE\.hermes-web-shell\access-password.txt"
 ```
 
-它与 Cloudflare tunnel token 是两种不同凭证。macOS / Linux 可使用这一网页入口，但 CLI 兼容性需按实际 Hermes 安装环境验证。
+This is different from the Cloudflare token. macOS/Linux can use browser pairing, but check CLI compatibility with your actual installation.
 
-## 更新
+## Update
 
-先关闭二维码窗口，停止本项目的 Web 服务，再在项目目录执行：
+Close the window and stop this project's web service, then run:
 
 ```powershell
 git pull --ff-only
 npm ci
 ```
 
-重新双击启动器。若 Git 提示本地有改动，先保存或提交自己的修改，不要覆盖。通常无需重配域名；已登录手机的会话文件保存在项目之外，更新代码不会主动删除它。更新后旧的未使用二维码需要重新生成。
+Launch again. Preserve or commit local modifications if Git reports them. Domain setup usually stays unchanged. Sessions are stored outside the project and are not deliberately removed by code updates. Generate a fresh QR after restarting.

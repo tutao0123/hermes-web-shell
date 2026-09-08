@@ -1,64 +1,64 @@
-# 常见问题
+# Troubleshooting
 
-[返回首页](../README.md) · [安装指南](getting-started.md)
+[Home](../README.md) · [Setup](getting-started.md)
 
-## 最快的排查顺序
+Check the local page first, then the public domain, then Hermes chat. These isolate the web service, tunnel, and model/CLI layers.
 
-先检查电脑本机 `http://127.0.0.1:5174`，再检查手机访问自己的域名，最后检查 Hermes 能否聊天。这样可以区分网页服务、隧道、模型调用三个环节。
-
-| 现象 | 先检查什么 |
+| Symptom | Check first |
 | --- | --- |
-| 本机页面打不开 | 在项目目录运行 `npm run dev`，查看错误；确认依赖已安装、5174 未被其他程序占用 |
-| 本机能打开，域名打不开 | cloudflared 是否在线、域名路由是否指向 `http://127.0.0.1:5174` |
-| Cloudflare 错误页或 502 | 查看连接器日志、确认本机服务仍运行；不要先改模型配置 |
-| 页面能打开，只有发消息显示 502 | 在这台电脑的终端直接使用 Hermes，检查 CLI、模型供应商和网络；502 不一定来自 Cloudflare |
-| 显示演示会话或读不到会话 | 确认读取的是正确的 Hermes 用户目录和 `state.db`；演示页面不是连接真实 Hermes 成功的证明 |
-| 扫码提示失效或已使用 | 刷新二维码并重新扫码；有效期 5 分钟，一次性，服务重启也会失效 |
-| 二维码生成失败 | 先完成一次 `npm run dev` 初始化，检查 `.env.local` 的 `SHELL_PUBLIC_URL` 是正确 HTTPS 地址 |
-| 域名打开显示 Host 被拒绝 | 核对 `VITE_ALLOWED_HOSTS`，只填域名，不带协议或路径，并重启服务 |
-| 提示请求来源不匹配 | 用正确域名重新打开页面，检查代理是否改写 Host 或 HTTPS 转发信息 |
-| 手机刷新后需要登录 | 登录可能到期、被撤销，或浏览器清除了网站数据；重新配对 |
+| Local page does not open | Run `npm run dev`; check dependencies and whether another process owns port 5174 |
+| Local works, domain fails | Connector status and routing to `http://127.0.0.1:5174` |
+| Cloudflare error page or 502 | Connector logs and the local service before changing model settings |
+| Only sending messages returns 502 | Run Hermes directly on this computer; check CLI, model provider, and network |
+| Demo data or missing conversations | Correct Hermes user directory and `state.db`; demo content does not prove a real connection |
+| QR expired or already used | Refresh; codes last five minutes, work once, and are cleared by service restart |
+| QR generation fails | Complete the first `npm run dev` initialization; check HTTPS `SHELL_PUBLIC_URL` |
+| Host rejected | Set `VITE_ALLOWED_HOSTS` to the actual hostname without protocol/path, then restart |
+| Request origin mismatch | Reopen the correct domain and check proxy Host/HTTPS header handling |
+| Sign-in lost | Session expiry, revocation, cleared site data, or a different browser; pair again |
 
-## 三种凭证有什么区别
+## Which credential is which?
 
-| 文件 / 凭证 | 用途 | 谁需要使用 |
+All files below are in your user directory's `.hermes-web-shell` folder.
+
+| File | Purpose | Used by |
 | --- | --- | --- |
-| `access-password.txt` | 手动网页登录密码 | 需要使用电脑网页或备用密码登录的人 |
-| `tunnel-token.txt` | 让 cloudflared 加入指定隧道 | 本机连接器 |
-| `local-pairing-key.txt` | 本地窗口调用配对管理接口 | 本机启动器自动读取 |
+| `access-password.txt` | Manual browser sign-in | Browser users |
+| `tunnel-token.txt` | Join the configured tunnel | cloudflared |
+| `local-pairing-key.txt` | Local pairing management | Native launcher, automatically |
 
-这些文件保存在用户目录的 `.hermes-web-shell` 下。手机扫码不需要手动输入以上任何一种。二维码本身是临时访问凭证，也不应发给不打算授权的人。
+Phone pairing does not require typing any of them. The QR code is itself a temporary access credential; show it only to intended devices.
 
-## 我已经扫码，为什么还要重新登录
+## Why do I need to sign in again?
 
-请尽量在同一个浏览器使用。相机、聊天应用内置浏览器、Safari 或 Chrome 可能使用不同的网站数据。无痕模式关闭后也可能丢失登录。
+Use the same browser. Camera links, in-app browsers, Safari, and Chrome may have separate site data. Private browsing may discard sessions when closed. Sessions last 30 days.
 
-登录有效期为 30 天。收藏普通域名，而不是收藏包含配对凭证的扫码链接。若当前手机已经能直接打开网页，就不必再次扫码。
+Bookmark the normal domain, not a pairing link. If the page already opens while signed in, there is no need to scan again.
 
-## 双击启动器没有窗口
+## The launcher does not open
 
-在项目目录手动运行，以便看到脚本启动错误：
+Run from the project folder:
 
 ```powershell
 powershell.exe -NoProfile -STA -File .\scripts\connect-phone.ps1
 ```
 
-检查 Node.js 是否在 PATH 中、是否执行过 `npm ci`、是否完成首次服务初始化。设备若禁用 Windows Script Host，可以用上述 PowerShell 入口。组织限制脚本执行时，请遵循设备管理规则。
+Check Node.js on PATH, `npm ci`, and first-run initialization. If Windows Script Host is disabled, use this PowerShell entry point. Follow organizational rules for script execution.
 
-## 关掉窗口，为什么还能访问
+## Closing the window does not stop access
 
-二维码窗口和后台服务是分开的。关闭窗口不会停止 Web 服务或连接器。如果是在前台终端启动服务，可在对应终端按 Ctrl+C；如果由系统服务或后台进程运行，应停止对应的服务或已确认属于本项目的进程。不要为了停止本项目而结束所有 Node 或 cloudflared 进程。
+The pairing window and background service are separate. Use Ctrl+C in the corresponding foreground terminal, or stop the identified service/process that belongs to this installation. Do not terminate all Node or cloudflared processes.
 
-## 需要代理吗
+## Do I need a proxy?
 
-代理是否需要取决于你的网络以及 Hermes 使用的模型服务。浏览器走代理，不代表 Node、Hermes 或 cloudflared 也会自动使用相同设置。先确定失败的是哪一环，再按对应程序的方式配置；不要把本地代理端口填进隧道的服务地址，那里仍应是 `127.0.0.1:5174`。
+That depends on your network and model provider. Browser proxy settings are not automatically shared by Node, Hermes, or cloudflared. Identify the failing component first, then configure that program. The tunnel's service address should still be `127.0.0.1:5174`, not a proxy port.
 
-## 换电脑或停用旧服务器
+## Switching computers
 
-新电脑需要自己的 Hermes 环境和会话数据。停止旧服务器的连接器后，可以按 Cloudflare 的流程把隧道连接到新电脑，但网页会话和文件不会因此自动搬过来。新电脑生成的二维码只授权访问新电脑。
+The new computer needs its own working Hermes environment and conversation data. Stop the old connector before moving the tunnel. Routing changes do not transfer files or conversations; new pairing codes authorize the new computer.
 
-## 提交问题时附上什么
+## Reporting an issue
 
-在 [GitHub Issues](https://github.com/tutao0123/hermes-web-shell/issues) 中说明：系统、Node.js 版本、失败步骤、本机与公网各自能否打开、相关错误文字，以及最近是否更换域名或升级 Hermes。
+Include your OS, Node.js version, failing step, whether local and public pages work, the error text, and recent domain/Hermes changes in [GitHub Issues](https://github.com/tutao0123/hermes-web-shell/issues).
 
-后台启动日志通常在 `~/.hermes-web-shell/web.log` 和 `web-error.log`；前台运行时直接查看终端。隧道日志取决于 cloudflared 的运行方式。发布日志前去掉 token、访问密码、二维码、模型密钥和私人会话内容。
+Background web logs are usually `~/.hermes-web-shell/web.log` and `web-error.log`; foreground logs appear in the terminal. Tunnel logs depend on how cloudflared runs. Remove tokens, passwords, QR codes, model keys, and private conversation content before sharing.

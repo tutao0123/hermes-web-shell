@@ -1,30 +1,30 @@
 # Hermes Web Shell
 
-**让手机连接你电脑上的 Hermes。首次配置好 Cloudflare，以后打开二维码窗口，手机扫一扫即可开始。**
+**Use your computer's Hermes Agent from your phone. Configure Cloudflare once, open the pairing window, and scan to connect.**
 
-这是社区维护的 Hermes 配套 Web 应用，独立运行，不是官方产品，也不是安装一个 skill 就能运行的插件。你的电脑负责运行 Hermes，手机负责查看会话、发送消息和继续任务。
+A community-maintained companion web app for a locally installed Hermes Agent. Your computer runs Hermes; your phone lets you browse conversations and continue tasks. This is an independent application, not an official Hermes product, plugin, or skill.
 
-## 你可以用它做什么
+## Features
 
-- 按工作区浏览本机 Hermes 会话，查看消息并继续聊天。
-- 在 Windows 上直接打开二维码窗口，无需先登录电脑网页。
-- 手机扫码配对后保持登录 30 天，支持取消设备连接。
-- 在手机浏览器使用，提供明暗主题和中英文切换。
+- Browse local conversations grouped by workspace and continue chatting.
+- Open a native Windows pairing window without a desktop browser login.
+- Pair using a single-use QR code, stay signed in for 30 days, and revoke devices.
+- Use a mobile browser with light/dark themes and Chinese/English preferences.
 
-![电脑、Cloudflare 与手机的连接流程](docs/images/connection-flow.svg)
+![Computer, tunnel, and phone connection](docs/images/connection-flow.svg)
 
-## 从这里开始
+## Start here
 
-| 你现在的情况 | 下一步 |
+| What you need | Guide |
 | --- | --- |
-| 第一次使用 | [安装与扫码连接指南](docs/getting-started.md) |
-| 已经安装，想配置域名 | [手动配置 Cloudflare](docs/cloudflare.md) |
-| 无法连接、扫码失败或发消息失败 | [常见问题](docs/troubleshooting.md) |
-| 想修改代码或了解配置 | [开发与配置说明](docs/development.md) |
+| First-time installation | [Installation and phone pairing](docs/getting-started.md) |
+| A public domain | [Manual Cloudflare setup](docs/cloudflare.md) |
+| Help with errors | [Troubleshooting](docs/troubleshooting.md) |
+| Configuration and contributing | [Development](docs/development.md) |
 
-### 首次准备
+### First-time setup
 
-需要一台已能使用 Hermes 的电脑、Git、Node.js 24，以及已接入 Cloudflare 的域名。原生二维码窗口目前仅支持 Windows；其他系统可用网页配对入口，但本项目尚未对所有平台完成验证。
+You need a working Hermes installation, Git, Node.js 24, and a domain connected to Cloudflare. The native pairing window currently supports Windows only. Other systems can use browser pairing, but full platform compatibility has not been verified.
 
 ```powershell
 git clone https://github.com/tutao0123/hermes-web-shell.git
@@ -33,41 +33,35 @@ npm ci
 npm run dev
 ```
 
-看到服务启动后，按[安装指南](docs/getting-started.md)配置自己的域名和隧道。**只运行上述命令还不能从手机远程访问。**
+Then follow the [setup guide](docs/getting-started.md). **These commands alone do not make the app remotely accessible.**
 
-### 配置好之后
+### Everyday use
 
-1. 在电脑上双击仓库里的 **`连接手机.vbs`**。
-2. 用手机相机扫描窗口中的二维码，在浏览器中打开。
-3. 开始使用 Hermes。下次手机登录仍有效时，直接打开自己的域名即可。
+1. Double-click **`连接手机.vbs`** ("Connect phone") in the project folder.
+2. Scan the window's code with your phone camera and open it in a browser.
+3. Use Hermes. While signed in, open your domain directly next time.
 
-你也可以为 `连接手机.vbs` 自行创建桌面快捷方式。仓库不会自动在新用户桌面创建快捷方式。
+You can create a desktop shortcut yourself; the repository does not automatically create one. The native window currently uses Chinese labels, with English equivalents explained in the guides.
 
-二维码有效期为 5 分钟，只能兑换一次。电脑必须保持开机、联网，Hermes Web Shell 与隧道也必须运行；关闭二维码窗口不会停止后台服务。
+Codes expire after five minutes and work once. Keep the computer awake and online, with the web service and tunnel running. Closing the window does not stop background services.
 
-## 当前范围
+## Current scope
 
-- Cloudflare 需要手动配置；还没有自动安装向导、通用安装包或开机自启。
-- 当前通过 Vite 服务中的接口连接本机 Hermes；不能把构建后的静态网页单独上传就当作完整服务使用。
-- 会话读取依赖本机 Hermes 数据库及 CLI。没有真实数据时，界面可能回退到演示内容。
-- 手机连接的是运行本应用的电脑，不会自动迁移其他服务器上的 Hermes 会话。
-- 二维码不含 Cloudflare token 或网页登录密码，但扫码者可以获得访问权限；请只向自己的设备展示。
+- Cloudflare setup is manual. There is no setup wizard, universal installer, or automatic startup at boot.
+- The backend runs inside Vite. Uploading the static build alone does not provide a working Hermes backend.
+- Real conversations require the local Hermes database and CLI. The interface may fall back to demo data.
+- Connecting another computer does not migrate conversations from an old server.
+- QR codes contain temporary access credentials, not your Cloudflare token or login password. Show them only to devices you intend to authorize.
 
-## 界面预览
+## Preview
 
-以下是历史手机版界面截图；登录及配对流程以当前版本和安装指南为准。
+Historical mobile screenshots; follow the setup guide for current sign-in and pairing behavior.
 
 <p>
-  <img src="docs/screenshots/phone-03-workspaces.png" alt="手机上的工作区列表" width="250">
-  <img src="docs/screenshots/phone-02-greetings.png" alt="手机上的 Hermes 会话" width="250">
+  <img src="docs/screenshots/phone-03-workspaces.png" alt="Workspace list on a phone" width="250">
+  <img src="docs/screenshots/phone-02-greetings.png" alt="Hermes conversation on a phone" width="250">
 </p>
 
-## English
-
-A community companion web app for your locally installed Hermes Agent. Configure a Cloudflare Tunnel once, then open the Windows pairing window and scan its QR code with your phone. No desktop browser login is needed for the native launcher. Pairing codes are single-use and expire after five minutes; phone sessions last 30 days. Keep the host computer and tunnel running.
-
-This is not an official Hermes plugin or skill. Start with the [setup guide (Chinese)](docs/getting-started.md). Node.js 24 is the documented runtime; Cloudflare setup is manual.
-
-## 许可
+## License
 
 [MIT](LICENSE) © 2026 Tao

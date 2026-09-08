@@ -1,7 +1,7 @@
-# 文档插图
+# Documentation illustrations
 
-这些 SVG 是手绘字段与流程示意，不是产品或 Cloudflare 的实拍截图。仅使用 example.com、通用用户目录和不可扫码的占位区域，不包含真实凭证。
+These SVGs are field and workflow illustrations, not screenshots of Hermes or Cloudflare. They use example.com, generic paths, and non-scannable placeholders without real credentials.
 
-更新或新增截图时，务必遮住 tunnel token、访问密码、二维码、浏览器地址里的配对凭证、账号 ID、邮箱及私人会话信息。使用完全不透明的覆盖，并导出合成后的图片；不要只加模糊或在 SVG 中保留遮挡下的原始凭证。保留需要指导填写的字段名、协议和示例端口。
+Before sharing screenshots, redact tunnel tokens, passwords, QR codes, pairing URLs, account IDs, emails, and private conversations. Use opaque redaction and export a flattened image. Do not rely on blur or retain original secrets underneath SVG overlays. Keep relevant field names, protocols, and example ports readable.
 
-不要用公开可扫码的真实二维码作为说明图片。真实界面截图与示意图应分别标明，不应伪称为相同界面。
+Never publish a real scannable pairing code as documentation. Label screenshots and illustrations accurately. The native window still uses Chinese labels; English illustration labels describe the controls rather than claiming to reproduce the current interface.
