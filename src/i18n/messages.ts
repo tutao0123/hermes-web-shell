@@ -18,12 +18,15 @@ export type MessageKey =
   | 'workspaces.remote'
   | 'workspaces.updatedAt'
   | 'workspaces.taskCount'
+  | 'tasks.newSession'
+  | 'tasks.emptySession'
   | 'tasks.listTitle'
   | 'tasks.meta'
   | 'tasks.updatedAt'
   | 'chat.sessionTitle'
   | 'chat.loading'
   | 'chat.composerPlaceholder'
+  | 'chat.sending'
   | 'chat.send'
   | 'chat.terminal'
   | 'chat.changes'
@@ -72,12 +75,15 @@ const zh: Record<MessageKey, string> = {
   'workspaces.remote': '远程',
   'workspaces.updatedAt': '更新于 {time}',
   'workspaces.taskCount': '{count} 个任务',
+  'tasks.newSession': '新建会话',
+  'tasks.emptySession': '发送第一条消息，开始这个工作区的新会话。',
   'tasks.listTitle': '任务列表',
   'tasks.meta': '{count} 个任务',
   'tasks.updatedAt': '更新于 {time}',
   'chat.sessionTitle': '任务会话',
   'chat.loading': '加载会话…',
   'chat.composerPlaceholder': '继续输入以排队后续修改',
+  'chat.sending': 'Hermes 正在回复…',
   'chat.send': '发送',
   'chat.terminal': '终端',
   'chat.changes': '更改',
@@ -127,12 +133,15 @@ const en: Record<MessageKey, string> = {
   'workspaces.remote': 'Remote',
   'workspaces.updatedAt': 'Updated {time}',
   'workspaces.taskCount': '{count} tasks',
+  'tasks.newSession': 'New session',
+  'tasks.emptySession': 'Send your first message to start a new session in this workspace.',
   'tasks.listTitle': 'Tasks',
   'tasks.meta': '{count} tasks',
   'tasks.updatedAt': 'Updated {time}',
   'chat.sessionTitle': 'Task session',
   'chat.loading': 'Loading session…',
   'chat.composerPlaceholder': 'Type to queue follow-up changes',
+  'chat.sending': 'Hermes is responding…',
   'chat.send': 'Send',
   'chat.terminal': 'Terminal',
   'chat.changes': 'Changes',

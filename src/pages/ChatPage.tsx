@@ -9,21 +9,23 @@ interface Props {
   workspace: Workspace
   task: Task
   modelName?: string
+  onSessionCreated: (sessionId: string, title: string) => void
   onBack: () => void
 }
 
-export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Props) {
+export function ChatPage({ workspace, task, modelName = 'hermes', onBack, onSessionCreated }: Props) {
   const { t } = useUiPrefs()
   const [blocks, setBlocks] = useState<ChatBlock[]>([])
   const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!task.draft)
+  const [error, setError] = useState('')
   const [sending, setSending] = useState(false)
   const [desktopOpen, setDesktopOpen] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (task.draft) return
     let cancelled = false
-    setLoading(true)
     hermesAdapter.getChat(task.id).then((session) => {
       if (!cancelled) {
         setBlocks(session.blocks)
@@ -33,7 +35,7 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Prop
     return () => {
       cancelled = true
     }
-  }, [task.id])
+  }, [task.id, task.draft])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -44,9 +46,26 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Prop
     const text = input.trim()
     if (!text || sending) return
     setSending(true)
+    setError('')
+    if (task.draft) {
+      try {
+        const result = await hermesAdapter.startSession(workspace.path, text)
+        if (!result.sessionId || result.sessionId === 'unknown') throw new Error('Hermes did not return a session ID')
+        onSessionCreated(result.sessionId, text.slice(0, 80))
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Could not create session')
+      } finally {
+        setSending(false)
+      }
+      return
+    }
     setInput('')
     const added = await hermesAdapter.sendMessage(task.id, text)
-    setBlocks((prev) => [...prev, ...added])
+    if (added.sessionId !== task.id) {
+      onSessionCreated(added.sessionId, task.title)
+    } else {
+      setBlocks((prev) => [...prev, ...added.blocks])
+    }
     setSending(false)
   }
 
@@ -55,7 +74,7 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Prop
       <header className="app-header compact sticky">
         <div className="header-top">
           <div className="header-row">
-            <button type="button" className="icon-btn back" onClick={onBack}>
+            <button type="button" className="icon-btn back" onClick={onBack} disabled={sending}>
               ‹
             </button>
             <div className="grow">
@@ -71,6 +90,9 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Prop
       </header>
 
       <div className="chat-thread">
+        {task.draft ? <p className="muted center">{t('tasks.emptySession')}</p> : null}
+        {sending ? <p role="status" className="muted center">{t('chat.sending')}</p> : null}
+        {error ? <p role="alert">{error}</p> : null}
         {loading ? <p className="muted center">{t('chat.loading')}</p> : null}
         {blocks.map((block) => (
           <ChatBlockView
@@ -89,10 +111,11 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack }: Prop
 
       <form className="composer" onSubmit={handleSend}>
         <textarea
+          disabled={sending}
           rows={2}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={t('chat.composerPlaceholder')}
+          placeholder={t(task.draft ? 'tasks.emptySession' : 'chat.composerPlaceholder')}
         />
         <div className="composer-row">
           <span className="composer-tools" aria-hidden>

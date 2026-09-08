@@ -64,7 +64,12 @@ function App() {
   if (view.name === 'chat' && currentWorkspace && currentTask) {
     return (
       <ChatPage
+        key={currentTask.id}
         workspace={currentWorkspace}
+        onSessionCreated={(sessionId, title) => {
+          setTasks((prev) => prev.map((task) => task.id === currentTask.id ? { ...task, id: sessionId, title, draft: false } : task))
+          setView({ name: 'chat', workspaceId: currentWorkspace.id, taskId: sessionId })
+        }}
         task={currentTask}
         modelName={modelName}
         onBack={() => setView({ name: 'tasks', workspaceId: currentWorkspace.id })}
@@ -77,6 +82,11 @@ function App() {
       <TasksPage
         workspace={currentWorkspace}
         tasks={workspaceTasks}
+        onNewSession={() => {
+          const id = `draft-${crypto.randomUUID()}`
+          setTasks((prev) => [{ id, draft: true, workspaceId: currentWorkspace.id, title: t('tasks.newSession'), status: 'pending', updatedAt: '' }, ...prev.filter((task) => !task.draft)])
+          setView({ name: 'chat', workspaceId: currentWorkspace.id, taskId: id })
+        }}
         onBack={() => setView({ name: 'workspaces' })}
         onOpenTask={(taskId) =>
           setView({

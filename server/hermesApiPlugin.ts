@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
-import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs'
 import { homedir, tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { delimiter, isAbsolute, join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
@@ -278,24 +278,25 @@ function chineseError(raw: string, code?: number | null): string {
 function runHermesChat(
   message: string,
   sessionId?: string,
+  cwd = process.cwd(),
 ): Promise<{ reply: string; sessionId: string; raw: string }> {
   return new Promise((resolve, reject) => {
     const dir = mkdtempSync(join(tmpdir(), 'hermes-web-'))
     const usagePath = join(dir, 'usage.json')
-    const args = ['-z', message, '--usage-file', usagePath, '--yolo']
+    const args = ['chat', '-Q', '-q', message, '--yolo']
     if (sessionId) {
       args.push('--resume', sessionId)
     }
 
     const env = {
       ...process.env,
-      PATH: `${join(homedir(), '.local', 'bin')}:${process.env.PATH || ''}`,
+      PATH: `${join(homedir(), '.local', 'bin')}${delimiter}${process.env.PATH || ''}`,
       HERMES_HOME,
     }
 
     const child = spawn(HERMES_BIN, args, {
       env,
-      cwd: process.cwd(),
+      cwd,
       stdio: ['ignore', 'pipe', 'pipe'],
     })
 
@@ -367,20 +368,12 @@ function runHermesChat(
         return
       }
 
-      let resolvedId = usageSession || sessionId || ''
+      const reportedSession = [...stderr.matchAll(/^session_id:\s*(\S+)\s*$/gm)].at(-1)?.[1]
+      const resolvedId = reportedSession || usageSession || sessionId
       if (!resolvedId) {
-        try {
-          const db = openDb()
-          const latest = db
-            .prepare(
-              `SELECT id FROM sessions ORDER BY started_at DESC LIMIT 1`,
-            )
-            .get() as { id: string } | undefined
-          db.close()
-          if (latest?.id) resolvedId = latest.id
-        } catch {
-          /* ignore */
-        }
+        cleanup()
+        reject(new Error('Hermes did not return a session ID; check the session list before retrying.'))
+        return
       }
 
       cleanup()
@@ -461,6 +454,7 @@ async function handleApi(
       const raw = await readBody(req)
       const body = JSON.parse(raw || '{}') as {
         sessionId?: string
+        cwd?: string
         message?: string
       }
       const message = (body.message || '').trim()
@@ -468,7 +462,20 @@ async function handleApi(
         sendJson(res, 400, { error: '消息不能为空' })
         return true
       }
-      const result = await runHermesChat(message, body.sessionId)
+      let cwd = body.cwd
+      if (body.sessionId) {
+        const session = listSessions().find((item) => item.id === body.sessionId)
+        if (!session) { sendJson(res, 404, { error: 'Session not found' }); return true }
+        cwd = session.cwd
+      } else if (typeof cwd !== 'string' || !listSessions().some((item) => item.cwd === cwd)) {
+        if (cwd === '~/.hermes' && listSessions().length === 0) cwd = HERMES_HOME
+        else { sendJson(res, 400, { error: 'Please select an existing workspace' }); return true }
+      }
+      if (!cwd || !isAbsolute(cwd) || !statSync(cwd, { throwIfNoEntry: false })?.isDirectory()) {
+        sendJson(res, 400, { error: 'This workspace directory is not available on this computer' })
+        return true
+      }
+      const result = await runHermesChat(message, body.sessionId, cwd)
       sendJson(res, 200, result)
     } catch (e) {
       const err = e as Error & { statusHint?: number; raw?: string }

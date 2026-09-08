@@ -3,6 +3,7 @@ export type TaskStatus = 'running' | 'completed' | 'pending'
 
 export interface Task {
   id: string
+  draft?: boolean
   workspaceId: string
   title: string
   status: TaskStatus

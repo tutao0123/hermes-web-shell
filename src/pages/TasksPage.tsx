@@ -6,11 +6,12 @@ import type { Task, Workspace } from '../types'
 interface Props {
   workspace: Workspace
   tasks: Task[]
+  onNewSession: () => void
   onBack: () => void
   onOpenTask: (taskId: string) => void
 }
 
-export function TasksPage({ workspace, tasks, onBack, onOpenTask }: Props) {
+export function TasksPage({ workspace, tasks, onBack, onOpenTask, onNewSession }: Props) {
   const { t } = useUiPrefs()
 
   return (
@@ -33,7 +34,7 @@ export function TasksPage({ workspace, tasks, onBack, onOpenTask }: Props) {
       <section className="section">
         <div className="section-head">
           <h2>{t('tasks.listTitle')}</h2>
-          <p className="meta">{t('tasks.meta', { count: tasks.length })}</p>
+          <button type="button" className="btn-outline" onClick={onNewSession}>+ {t('tasks.newSession')}</button>
         </div>
         <ul className="task-list">
           {tasks.map((task) => (

@@ -48,7 +48,7 @@ function workspaceIdFromCwd(cwd: string): string {
 }
 
 function workspaceName(cwd: string, locale: Locale): string {
-  const parts = cwd.replace(/\/+$/, '').split('/').filter(Boolean)
+  const parts = cwd.replace(/\\/g, '/').replace(/\/+$/, '').split('/').filter(Boolean)
   const leaf = parts[parts.length - 1] || cwd
   if (leaf) return leaf
   return locale === 'en' ? 'Local Hermes' : 'Local Hermes ZH'
@@ -148,8 +148,16 @@ export class HermesAdapter {
     }
   }
 
-  async sendMessage(taskId: string, content: string): Promise<ChatBlock[]> {
-    if (this.useMock) return mockAdapter.sendMessage(taskId, content)
+  async startSession(cwd: string, message: string): Promise<{ sessionId: string; reply: string }> {
+    return fetchJson('/api/hermes/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cwd, message }),
+    })
+  }
+
+  async sendMessage(taskId: string, content: string): Promise<{ blocks: ChatBlock[]; sessionId: string }> {
+    if (this.useMock) return { blocks: await mockAdapter.sendMessage(taskId, content), sessionId: taskId }
     const user: ChatBlock = { kind: 'user', id: `u-${Date.now()}`, content }
     try {
       const result = await fetchJson<{ reply: string; sessionId: string; raw?: string }>(
@@ -166,7 +174,7 @@ export class HermesAdapter {
         role: 'assistant',
         content: result.reply || '(empty reply)',
       }
-      return [user, reply]
+      return { blocks: [user, reply], sessionId: result.sessionId }
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'send failed'
       const reply: ChatBlock = {
@@ -175,7 +183,7 @@ export class HermesAdapter {
         role: 'assistant',
         content: `WARN ${msg}`,
       }
-      return [user, reply]
+      return { blocks: [user, reply], sessionId: taskId }
     }
   }
 
