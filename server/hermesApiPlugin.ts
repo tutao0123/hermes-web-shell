@@ -6,7 +6,18 @@ import { DatabaseSync } from 'node:sqlite'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Plugin } from 'vite'
 
-const HERMES_HOME = process.env.HERMES_HOME || join(homedir(), '.hermes')
+function resolveHermesHome(): string {
+  if (process.env.HERMES_HOME) return process.env.HERMES_HOME
+  if (process.platform === 'win32' && process.env.LOCALAPPDATA) {
+    const winPath = join(process.env.LOCALAPPDATA, 'hermes')
+    try {
+      if (statSync(winPath).isDirectory()) return winPath
+    } catch {}
+  }
+  return join(homedir(), '.hermes')
+}
+
+const HERMES_HOME = resolveHermesHome()
 const STATE_DB = join(HERMES_HOME, 'state.db')
 const HERMES_BIN = process.env.HERMES_BIN || 'hermes'
 const DASHBOARD_STATUS = 'http://127.0.0.1:9119/api/status'

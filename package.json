@@ -9,6 +9,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node scripts/test-access.mjs",
+    "pair": "node scripts/pair-cli.mjs pair",
+    "devices": "node scripts/pair-cli.mjs devices",
     "preview": "vite preview"
   },
   "dependencies": {

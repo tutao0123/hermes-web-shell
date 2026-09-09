@@ -60,3 +60,41 @@ test('password login, QR one-use, persistent sessions, revocation and CSRF', asy
     assert.equal((await call('/api/private', null, cookie)).status, 401)
   } finally { await new Promise(resolve => server.close(resolve)); rmSync(dir, { recursive: true, force: true }) }
 })
+
+test('LAN direct pairing without publicUrl and singleDevice exclusive mode', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'hermes-auth-lan-'))
+  let middleware
+  accessPlugin({ configuredPassword: 'test-password-long', singleDevice: true, sessionDays: 3, storageDirectory: dir }).configureServer({ middlewares: { use(fn) { middleware = fn } } })
+  const server = createServer((req, res) => middleware(req, res, () => res.end('protected')))
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  const origin = 'http://127.0.0.1:' + server.address().port
+  const call = (path, data, cookie = '') => fetch(origin + path, { method: data ? 'POST' : 'GET', headers: { cookie, ...(data ? { origin, 'content-type': 'application/json' } : {}) }, body: data ? JSON.stringify(data) : undefined })
+  try {
+    const localKey = readFileSync(join(dir, 'local-pairing-key.txt'), 'utf8')
+    const pairResp = await fetch(origin + '/auth/pair', { method: 'POST', headers: { 'x-hermes-local-key': localKey, 'content-type': 'application/json' }, body: '{}' })
+    assert.equal(pairResp.status, 200)
+    const pairData = await pairResp.json()
+    assert.equal(pairData.isLan, true)
+    assert.match(pairData.link, /^http:\/\//)
+    assert.match(pairData.link, /#pair=/)
+
+    // First device redeems
+    const token1 = new URLSearchParams(new URL(pairData.link).hash.slice(1)).get('pair')
+    const redeem1 = await call('/auth/redeem', { token: token1 })
+    assert.equal(redeem1.status, 200)
+    const phoneCookie1 = redeem1.headers.get('set-cookie').split(';')[0]
+    assert.equal(await (await call('/api/private', null, phoneCookie1)).text(), 'protected')
+
+    // Second device pairs
+    const pairResp2 = await fetch(origin + '/auth/pair', { method: 'POST', headers: { 'x-hermes-local-key': localKey, 'content-type': 'application/json' }, body: '{}' })
+    const pairData2 = await pairResp2.json()
+    const token2 = new URLSearchParams(new URL(pairData2.link).hash.slice(1)).get('pair')
+    const redeem2 = await call('/auth/redeem', { token: token2 })
+    assert.equal(redeem2.status, 200)
+    const phoneCookie2 = redeem2.headers.get('set-cookie').split(';')[0]
+    assert.equal(await (await call('/api/private', null, phoneCookie2)).text(), 'protected')
+
+    // Since singleDevice=true, the first phone must have been invalidated
+    assert.equal((await call('/api/private', null, phoneCookie1)).status, 401)
+  } finally { await new Promise(resolve => server.close(resolve)); rmSync(dir, { recursive: true, force: true }) }
+})

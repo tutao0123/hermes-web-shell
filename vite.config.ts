@@ -17,10 +17,19 @@ function resolveAllowedHosts(env: Record<string, string>): true | string[] {
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
-    plugins: [accessPlugin(env.SHELL_ACCESS_PASSWORD, env.SHELL_PUBLIC_URL), react(), hermesApiPlugin()],
+    plugins: [
+      accessPlugin({
+        configuredPassword: env.SHELL_ACCESS_PASSWORD,
+        publicUrl: env.SHELL_PUBLIC_URL,
+        sessionDays: env.SHELL_SESSION_DAYS ? Number(env.SHELL_SESSION_DAYS) : undefined,
+        singleDevice: env.SHELL_SINGLE_DEVICE ? env.SHELL_SINGLE_DEVICE !== 'false' : undefined,
+      }),
+      react(),
+      hermesApiPlugin(),
+    ],
     server: {
-      host: '127.0.0.1',
-      port: 5174,
+      host: env.SHELL_HOST || '0.0.0.0',
+      port: Number(env.SHELL_PORT) || 5174,
       strictPort: true,
       // Default true so Cloudflare / local tunnels work without hardcoding a hostname.
       // Override with VITE_ALLOWED_HOSTS=host1,host2 or VITE_ALLOWED_HOSTS=true

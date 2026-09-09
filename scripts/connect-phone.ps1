@@ -23,13 +23,14 @@ try {
         if (!$ready) { throw 'Hermes 服务未能启动，请查看 web-error.log。' }
     }
     $tunnelToken = Join-Path $stateDirectory 'tunnel-token.txt'
-    $cloudflared = 'C:\Program Files (x86)\cloudflared\cloudflared.exe'
-    if ((Test-Path $tunnelToken) -and (Test-Path $cloudflared) -and !(Get-Process cloudflared -ErrorAction SilentlyContinue)) {
+    $cloudflaredCmd = (Get-Command cloudflared -ErrorAction SilentlyContinue)
+    $cloudflared = if ($cloudflaredCmd) { $cloudflaredCmd.Source } elseif (Test-Path 'C:\Program Files (x86)\cloudflared\cloudflared.exe') { 'C:\Program Files (x86)\cloudflared\cloudflared.exe' } elseif (Test-Path 'C:\Program Files\cloudflared\cloudflared.exe') { 'C:\Program Files\cloudflared\cloudflared.exe' } else { $null }
+    if ((Test-Path $tunnelToken) -and ($null -ne $cloudflared) -and !(Get-Process cloudflared -ErrorAction SilentlyContinue)) {
         Start-Process -FilePath $cloudflared -ArgumentList @('tunnel','run','--token-file',('"' + $tunnelToken + '"')) -WindowStyle Hidden
     }
     $form = New-Object Windows.Forms.Form
     $form.Text = 'Hermes · 连接手机'
-    $form.ClientSize = New-Object Drawing.Size(420, 620)
+    $form.ClientSize = New-Object Drawing.Size(420, 650)
     $form.StartPosition = 'CenterScreen'
     $form.BackColor = [Drawing.Color]::White
     $form.Font = New-Object Drawing.Font('Microsoft YaHei UI', 10)
@@ -54,11 +55,22 @@ try {
     $devices.Text = '已连接设备'
     $devices.SetBounds(215, 445, 175, 38)
     $form.Controls.Add($devices)
+    $copyLink = New-Object Windows.Forms.Button
+    $copyLink.Text = '复制连接链接'
+    $copyLink.SetBounds(25, 492, 365, 36)
+    $form.Controls.Add($copyLink)
     $note = New-Object Windows.Forms.Label
-    $note.Text = "扫码登录保留 30 天。`n关闭此窗口后，Hermes 和隧道继续在后台运行。"
-    $note.SetBounds(25, 505, 370, 90)
+    $note.Text = "扫码登录支持单设备独占与短效防护。`n关闭此窗口后，Hermes 服务继续在后台运行。"
+    $note.SetBounds(25, 538, 370, 95)
     $form.Controls.Add($note)
     $script:expires = 0
+    $script:currentLink = ''
+    $copyLink.Add_Click({
+        if ($script:currentLink) {
+            [Windows.Forms.Clipboard]::SetText($script:currentLink)
+            $label.Text = "链接已复制到剪贴板！可发到手机直接打开。"
+        }
+    })
     function Update-QR {
         try {
             $refresh.Enabled = $false
@@ -71,8 +83,10 @@ try {
             $sourceImage.Dispose(); $stream.Dispose()
             if ($oldImage) { $oldImage.Dispose() }
             $script:expires = $result.expires
+            $script:currentLink = $result.link
             Set-Content (Join-Path $stateDirectory 'pairing-window-status.txt') 'QR ready'
-            $label.Text = '二维码 5 分钟有效，仅可使用一次。'
+            $modeText = if ($result.isLan) { '【局域网模式】同一 Wi-Fi 可用' } else { '【公网模式】随时随地可用' }
+            $label.Text = "$modeText`n二维码 5 分钟有效，仅可使用一次。"
         } catch { $label.Text = '生成失败，请重试。'; [Windows.Forms.MessageBox]::Show($_.Exception.Message, '连接手机') | Out-Null }
         finally { $refresh.Enabled = $true }
     }
