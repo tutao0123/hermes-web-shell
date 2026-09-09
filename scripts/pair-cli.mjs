@@ -81,13 +81,14 @@ async function main() {
   }
 
   if (action === 'pair') {
+    const mode = process.argv[3] // 'lan' | 'public' | undefined
     const res = await fetch(`${baseUrl}/auth/pair`, {
       method: 'POST',
       headers: {
         'x-hermes-local-key': localKey,
         'content-type': 'application/json'
       },
-      body: '{}'
+      body: JSON.stringify({ mode })
     })
     if (!res.ok) {
       const err = await res.json().catch(() => ({}))
@@ -105,6 +106,8 @@ async function main() {
     console.log(JSON.stringify({
       success: true,
       link: data.link,
+      lanLink: data.lanLink,
+      publicLink: data.publicLink,
       isLan: data.isLan,
       qrPath: qrPath.replace(/\\/g, '/'),
       expires: data.expires,

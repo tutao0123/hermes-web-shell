@@ -163,30 +163,35 @@ export function accessPlugin(
         }
         if (!canManage) { json(401, { error: '请先登录' }); return }
         if (path === '/auth/pair') {
-          let targetUrlStr = publicUrl?.trim()
-          if (!targetUrlStr) {
-            const port = req.socket.localPort || 5174
-            const lanIp = getPrimaryLocalIp()
-            targetUrlStr = `http://${lanIp}:${port}`
+          const port = req.socket.localPort || 5174
+          const lanIp = getPrimaryLocalIp()
+          const lanLink = `http://${lanIp}:${port}`
+          let publicOrigin: string | undefined
+          if (publicUrl?.trim()) {
+            try {
+              const parsed = new URL(publicUrl.trim())
+              if (parsed.protocol === 'https:' && !parsed.username && !parsed.password) {
+                publicOrigin = parsed.origin
+              }
+            } catch {}
           }
-          let url: URL
-          try {
-            url = new URL(targetUrlStr)
-          } catch {
-            json(400, { error: '配置的访问地址格式不正确' })
-            return
-          }
-          const isLocal = isPrivateOrLocalHost(url.hostname)
-          if (url.username || url.password || (!isLocal && url.protocol !== 'https:')) {
-            json(400, { error: '公网访问必须使用 HTTPS 域名，局域网请使用内网 IP 直连' })
-            return
-          }
+
+          const preferLan = data.mode === 'lan' || !publicOrigin
+          const targetOrigin = preferLan ? lanLink : publicOrigin
+          const isLocal = preferLan
+
           for (const [k, p] of pairs) if (p.expires < Date.now() || p.owner === key) pairs.delete(k)
           const token = randomBytes(32).toString('base64url'), expires = Date.now() + 300000
           pairs.set(hash(token), { expires, owner: key })
-          const link = url.origin + '/connect#pair=' + token
+
+          const link = `${targetOrigin}/connect#pair=${token}`
+          const fullLanLink = `${lanLink}/connect#pair=${token}`
+          const fullPublicLink = publicOrigin ? `${publicOrigin}/connect#pair=${token}` : undefined
+
           json(200, {
             link,
+            lanLink: fullLanLink,
+            publicLink: fullPublicLink,
             isLan: isLocal,
             svg: await QRCode.toString(link, { type: 'svg', margin: 2 }),
             ...(localManager ? { png: await QRCode.toDataURL(link, { width: 320, margin: 2 }) } : {}),
