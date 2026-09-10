@@ -483,6 +483,25 @@ button, input, textarea { font: inherit; color: inherit; }
 .composer-tools {
   display: flex; align-items: center; gap: 10px; color: var(--muted);
 }
+.composer-add-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.composer-add-btn:active {
+  transform: scale(0.92);
+}
 .model-chip {
   font-size: 0.78rem;
   background: var(--chip-bg);

@@ -10,10 +10,11 @@ interface Props {
   task: Task
   modelName?: string
   onSessionCreated: (sessionId: string, title: string) => void
+  onNewSession?: () => void
   onBack: () => void
 }
 
-export function ChatPage({ workspace, task, modelName = 'hermes', onBack, onSessionCreated }: Props) {
+export function ChatPage({ workspace, task, modelName = 'hermes', onBack, onSessionCreated, onNewSession }: Props) {
   const { t } = useUiPrefs()
   const [blocks, setBlocks] = useState<ChatBlock[]>([])
   const [input, setInput] = useState('')
@@ -118,10 +119,20 @@ export function ChatPage({ workspace, task, modelName = 'hermes', onBack, onSess
           placeholder={t(task.draft ? 'tasks.emptySession' : 'chat.composerPlaceholder')}
         />
         <div className="composer-row">
-          <span className="composer-tools" aria-hidden>
-            <span>+</span>
+          <div className="composer-tools">
+            {onNewSession && (
+              <button
+                type="button"
+                className="composer-add-btn"
+                onClick={onNewSession}
+                title={t('tasks.newSession')}
+                aria-label={t('tasks.newSession')}
+              >
+                +
+              </button>
+            )}
             <span className="model-chip">{modelName}</span>
-          </span>
+          </div>
           <button
             type="submit"
             className="send-btn"

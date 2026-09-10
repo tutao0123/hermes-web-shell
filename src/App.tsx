@@ -7,35 +7,43 @@ import { useUiPrefs } from './prefs/UiPrefs'
 import type { AppView, Task, Workspace } from './types'
 import './App.css'
 
+function safeUuid(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0
+    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
+
 function App() {
   const { t } = useUiPrefs()
-  // The server authenticates the page and API before this bundle is served.
-  const authed = true
   const [view, setView] = useState<AppView>({ name: 'workspaces' })
   const [workspaces, setWorkspaces] = useState<Workspace[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
   const [ready, setReady] = useState(false)
-  const [modelName, setModelName] = useState('…')
+  const [modelName, setModelName] = useState('hermes')
 
   useEffect(() => {
-    if (!authed) return
     let cancelled = false
     Promise.all([
       hermesAdapter.listWorkspaces(),
       hermesAdapter.listTasks(),
       hermesAdapter.getStatus(),
-    ]).then(([ws, ts, status]) => {
+    ]).then(([w, t, s]) => {
       if (!cancelled) {
-        setWorkspaces(ws)
-        setTasks(ts)
-        setModelName(status.model || 'hermes')
+        setWorkspaces(w)
+        setTasks(t)
+        setModelName(s.model || 'hermes')
         setReady(true)
       }
     })
     return () => {
       cancelled = true
     }
-  }, [authed])
+  }, [])
 
   const currentWorkspace = useMemo(() => {
     if (view.name === 'workspaces') return undefined
@@ -52,6 +60,21 @@ function App() {
     return tasks.filter((t) => t.workspaceId === currentWorkspace.id)
   }, [currentWorkspace, tasks])
 
+  const handleNewSession = (workspaceId: string) => {
+    const id = `draft-${safeUuid()}`
+    setTasks((prev) => [
+      {
+        id,
+        draft: true,
+        workspaceId,
+        title: t('tasks.newSession'),
+        status: 'pending',
+        updatedAt: '',
+      },
+      ...prev.filter((task) => !task.draft),
+    ])
+    setView({ name: 'chat', workspaceId, taskId: id })
+  }
 
   if (!ready) {
     return (
@@ -72,6 +95,7 @@ function App() {
         }}
         task={currentTask}
         modelName={modelName}
+        onNewSession={() => handleNewSession(currentWorkspace.id)}
         onBack={() => setView({ name: 'tasks', workspaceId: currentWorkspace.id })}
       />
     )
@@ -82,11 +106,7 @@ function App() {
       <TasksPage
         workspace={currentWorkspace}
         tasks={workspaceTasks}
-        onNewSession={() => {
-          const id = `draft-${crypto.randomUUID()}`
-          setTasks((prev) => [{ id, draft: true, workspaceId: currentWorkspace.id, title: t('tasks.newSession'), status: 'pending', updatedAt: '' }, ...prev.filter((task) => !task.draft)])
-          setView({ name: 'chat', workspaceId: currentWorkspace.id, taskId: id })
-        }}
+        onNewSession={() => handleNewSession(currentWorkspace.id)}
         onBack={() => setView({ name: 'workspaces' })}
         onOpenTask={(taskId) =>
           setView({
