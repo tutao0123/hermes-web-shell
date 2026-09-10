@@ -15,19 +15,19 @@ import {
   type MessageKey,
 } from '../i18n/messages'
 
-export type Theme = 'light' | 'dark'
+export type Theme = 'hermes' | 'mono' | 'slate' | 'ares' | 'light'
+
+const VALID_THEMES: Theme[] = ['hermes', 'mono', 'slate', 'ares', 'light']
 
 function detectDefaultTheme(): Theme {
   try {
     const saved = localStorage.getItem(THEME_STORAGE_KEY)
-    if (saved === 'light' || saved === 'dark') return saved
+    if (saved === 'dark') return 'hermes'
+    if (VALID_THEMES.includes(saved as Theme)) return saved as Theme
   } catch {
     /* ignore */
   }
-  if (typeof window !== 'undefined' && window.matchMedia) {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark'
-  }
-  return 'light'
+  return 'hermes'
 }
 
 function detectDefaultLocale(): Locale {
@@ -81,7 +81,7 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
   const setTheme = useCallback((next: Theme) => setThemeState(next), [])
   const setLocale = useCallback((next: Locale) => setLocaleState(next), [])
   const toggleTheme = useCallback(
-    () => setThemeState((t) => (t === 'light' ? 'dark' : 'light')),
+    () => setThemeState((t) => (t === 'light' ? 'hermes' : 'light')),
     [],
   )
   const toggleLocale = useCallback(

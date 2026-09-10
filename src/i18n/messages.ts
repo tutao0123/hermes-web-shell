@@ -55,6 +55,10 @@ export type MessageKey =
   | 'prefs.localeEn'
   | 'prefs.themeLight'
   | 'prefs.themeDark'
+  | 'prefs.themeHermes'
+  | 'prefs.themeMono'
+  | 'prefs.themeSlate'
+  | 'prefs.themeAres'
   | 'prefs.localeLabel'
   | 'prefs.themeLabel'
 
@@ -112,8 +116,12 @@ const zh: Record<MessageKey, string> = {
   'prefs.connectPhone': '连接手机 / 管理设备',
   'prefs.localeZh': '中文',
   'prefs.localeEn': 'EN',
-  'prefs.themeLight': '亮',
-  'prefs.themeDark': '暗',
+  'prefs.themeLight': '明亮',
+  'prefs.themeDark': '暗色',
+  'prefs.themeHermes': '黑金',
+  'prefs.themeMono': '黑白',
+  'prefs.themeSlate': '冷蓝',
+  'prefs.themeAres': '战神',
   'prefs.localeLabel': '语言',
   'prefs.themeLabel': '主题',
 }
@@ -175,6 +183,10 @@ const en: Record<MessageKey, string> = {
   'prefs.localeEn': 'EN',
   'prefs.themeLight': 'Light',
   'prefs.themeDark': 'Dark',
+  'prefs.themeHermes': 'Gold',
+  'prefs.themeMono': 'Mono',
+  'prefs.themeSlate': 'Slate',
+  'prefs.themeAres': 'Ares',
   'prefs.localeLabel': 'Language',
   'prefs.themeLabel': 'Theme',
 }

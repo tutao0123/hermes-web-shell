@@ -1,99 +1,253 @@
 :root,
-[data-theme="light"] {
-  --bg: #f4f5f7;
-  --card: #ffffff;
-  --text: #1a1a1a;
-  --muted: #8a8f98;
-  --border: #e6e8ec;
-  --accent: #2f6fed;
-  --ok: #1a7f37;
-  --ok-bg: #e8f8ee;
-  --run: #1f6feb;
-  --run-bg: #eaf2ff;
-  --remote: #f3e0e3;
-  --remote-text: #8a3b48;
-  --radius: 12px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-  --surface-2: #eceef2;
-  --surface-3: #f3f4f6;
-  --surface-4: #e8eaee;
-  --surface-5: #fafbfc;
-  --surface-6: #f0f1f4;
-  --surface-7: #f1f2f5;
-  --banner-text: #5c6370;
-  --badge-bg: #eef0f3;
-  --badge-text: #666;
-  --pill-bg: #eee;
-  --pill-text: #555;
-  --input-bg: #fff;
-  --btn-primary-bg: #111;
-  --btn-primary-text: #fff;
-  --btn-outline-border: #c9ced6;
-  --btn-outline-bg: #fff;
-  --chip-bg: #e8eaee;
-  --chip-text: #555;
-  --chip-active-bg: #111;
-  --chip-active-text: #fff;
-  --header-sticky-bg: rgba(244, 245, 247, 0.92);
-  --composer-bg: rgba(244, 245, 247, 0.96);
-  --gate-gradient-from: #f7f8fa;
-  --gate-gradient-to: #e9ecf1;
-  --error: #b42318;
-  --task-count: #555;
-  --plus-btn-text: #444;
-  --thinking-text: #555;
-  --diff-badge-bg: #fff;
-  --del: #cf222e;
-  --prefs-active-bg: #111;
-  --prefs-active-text: #fff;
-}
-
+[data-theme="hermes"],
 [data-theme="dark"] {
-  --bg: #12141a;
-  --card: #1c1f28;
-  --text: #e8eaed;
-  --muted: #9aa0a6;
-  --border: #2a2f3a;
-  --accent: #5b8def;
-  --ok: #3dd68c;
-  --ok-bg: #143d2a;
-  --run: #6ba3ff;
-  --run-bg: #1a2a4a;
+  --bg: #090a0f;
+  --card: #13141d;
+  --text: #f3f4f6;
+  --muted: #8b8f9e;
+  --border: #232533;
+  --accent: #f5c542;
+  --accent-glow: rgba(245, 197, 66, 0.25);
+  --ok: #34d399;
+  --ok-bg: #064e3b;
+  --run: #f5c542;
+  --run-bg: rgba(245, 197, 66, 0.15);
   --remote: #3d2428;
   --remote-text: #f0a0a8;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --surface-2: #1e222c;
-  --surface-3: #232833;
-  --surface-4: #2a303c;
-  --surface-5: #1a1e26;
-  --surface-6: #1a1e26;
-  --surface-7: #232833;
+  --radius: 12px;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --surface-2: #191b26;
+  --surface-3: #1f212e;
+  --surface-4: #252838;
+  --surface-5: #151722;
+  --surface-6: #151722;
+  --surface-7: #1f212e;
   --banner-text: #a8b0bc;
-  --badge-bg: #2a303c;
-  --badge-text: #b0b6c0;
-  --pill-bg: #2a303c;
-  --pill-text: #b0b6c0;
-  --input-bg: #161920;
-  --btn-primary-bg: #e8eaed;
-  --btn-primary-text: #12141a;
-  --btn-outline-border: #3a4150;
-  --btn-outline-bg: #1c1f28;
-  --chip-bg: #2a303c;
-  --chip-text: #b0b6c0;
-  --chip-active-bg: #e8eaed;
-  --chip-active-text: #12141a;
-  --header-sticky-bg: rgba(18, 20, 26, 0.92);
-  --composer-bg: rgba(18, 20, 26, 0.96);
-  --gate-gradient-from: #12141a;
-  --gate-gradient-to: #1a1e26;
+  --badge-bg: #1f212e;
+  --badge-text: #c5c9d3;
+  --pill-bg: #1f212e;
+  --pill-text: #c5c9d3;
+  --input-bg: #13141d;
+  --btn-primary-bg: #f5c542;
+  --btn-primary-text: #090a0f;
+  --btn-outline-border: #353849;
+  --btn-outline-bg: #13141d;
+  --chip-bg: #191b26;
+  --chip-text: #c5c9d3;
+  --chip-active-bg: #f5c542;
+  --chip-active-text: #090a0f;
+  --header-sticky-bg: rgba(9, 10, 15, 0.85);
+  --composer-bg: rgba(9, 10, 15, 0.90);
+  --gate-gradient-from: #090a0f;
+  --gate-gradient-to: #151722;
   --error: #f85149;
-  --task-count: #b0b6c0;
-  --plus-btn-text: #c0c4cc;
-  --thinking-text: #b0b6c0;
-  --diff-badge-bg: #1c1f28;
+  --task-count: #c5c9d3;
+  --plus-btn-text: #f5c542;
+  --thinking-text: #a8b0bc;
+  --diff-badge-bg: #191b26;
   --del: #f85149;
-  --prefs-active-bg: #e8eaed;
-  --prefs-active-text: #12141a;
+  --prefs-active-bg: #f5c542;
+  --prefs-active-text: #090a0f;
+}
+
+[data-theme="mono"] {
+  --bg: #000000;
+  --card: #0d0d0d;
+  --text: #ffffff;
+  --muted: #737373;
+  --border: #222222;
+  --accent: #ffffff;
+  --accent-glow: rgba(255, 255, 255, 0.25);
+  --ok: #d4d4d4;
+  --ok-bg: #1a1a1a;
+  --run: #ffffff;
+  --run-bg: #1f1f1f;
+  --remote: #262626;
+  --remote-text: #e5e5e5;
+  --radius: 12px;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --surface-2: #141414;
+  --surface-3: #1a1a1a;
+  --surface-4: #242424;
+  --surface-5: #111111;
+  --surface-6: #111111;
+  --surface-7: #1a1a1a;
+  --banner-text: #a3a3a3;
+  --badge-bg: #1a1a1a;
+  --badge-text: #e5e5e5;
+  --pill-bg: #1a1a1a;
+  --pill-text: #e5e5e5;
+  --input-bg: #0d0d0d;
+  --btn-primary-bg: #ffffff;
+  --btn-primary-text: #000000;
+  --btn-outline-border: #333333;
+  --btn-outline-bg: #0d0d0d;
+  --chip-bg: #141414;
+  --chip-text: #a3a3a3;
+  --chip-active-bg: #ffffff;
+  --chip-active-text: #000000;
+  --header-sticky-bg: rgba(0, 0, 0, 0.88);
+  --composer-bg: rgba(0, 0, 0, 0.92);
+  --gate-gradient-from: #000000;
+  --gate-gradient-to: #111111;
+  --error: #ef4444;
+  --task-count: #a3a3a3;
+  --plus-btn-text: #ffffff;
+  --thinking-text: #a3a3a3;
+  --diff-badge-bg: #141414;
+  --del: #ef4444;
+  --prefs-active-bg: #ffffff;
+  --prefs-active-text: #000000;
+}
+
+[data-theme="slate"] {
+  --bg: #070d18;
+  --card: #0f172a;
+  --text: #f1f5f9;
+  --muted: #64748b;
+  --border: #1e293b;
+  --accent: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.25);
+  --ok: #2dd4bf;
+  --ok-bg: #134e4a;
+  --run: #38bdf8;
+  --run-bg: rgba(56, 189, 248, 0.15);
+  --remote: #312e81;
+  --remote-text: #c7d2fe;
+  --radius: 12px;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.55);
+  --surface-2: #131d33;
+  --surface-3: #18233d;
+  --surface-4: #1e2b4a;
+  --surface-5: #0b1324;
+  --surface-6: #0b1324;
+  --surface-7: #18233d;
+  --banner-text: #94a3b8;
+  --badge-bg: #18233d;
+  --badge-text: #cbd5e1;
+  --pill-bg: #18233d;
+  --pill-text: #cbd5e1;
+  --input-bg: #0f172a;
+  --btn-primary-bg: #38bdf8;
+  --btn-primary-text: #070d18;
+  --btn-outline-border: #293952;
+  --btn-outline-bg: #0f172a;
+  --chip-bg: #131d33;
+  --chip-text: #94a3b8;
+  --chip-active-bg: #38bdf8;
+  --chip-active-text: #070d18;
+  --header-sticky-bg: rgba(7, 13, 24, 0.85);
+  --composer-bg: rgba(7, 13, 24, 0.90);
+  --gate-gradient-from: #070d18;
+  --gate-gradient-to: #0b1324;
+  --error: #f87171;
+  --task-count: #94a3b8;
+  --plus-btn-text: #38bdf8;
+  --thinking-text: #94a3b8;
+  --diff-badge-bg: #131d33;
+  --del: #f87171;
+  --prefs-active-bg: #38bdf8;
+  --prefs-active-text: #070d18;
+}
+
+[data-theme="ares"] {
+  --bg: #0d0808;
+  --card: #181010;
+  --text: #f5e8e8;
+  --muted: #8c7373;
+  --border: #2d1818;
+  --accent: #ef4444;
+  --accent-glow: rgba(239, 68, 68, 0.25);
+  --ok: #f59e0b;
+  --ok-bg: #451a03;
+  --run: #ef4444;
+  --run-bg: rgba(239, 68, 68, 0.15);
+  --remote: #3b1616;
+  --remote-text: #fca5a5;
+  --radius: 12px;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --surface-2: #221414;
+  --surface-3: #2a1a1a;
+  --surface-4: #332020;
+  --surface-5: #140d0d;
+  --surface-6: #140d0d;
+  --surface-7: #2a1a1a;
+  --banner-text: #c2a8a8;
+  --badge-bg: #2a1a1a;
+  --badge-text: #e6cece;
+  --pill-bg: #2a1a1a;
+  --pill-text: #e6cece;
+  --input-bg: #181010;
+  --btn-primary-bg: #ef4444;
+  --btn-primary-text: #ffffff;
+  --btn-outline-border: #442424;
+  --btn-outline-bg: #181010;
+  --chip-bg: #221414;
+  --chip-text: #c2a8a8;
+  --chip-active-bg: #ef4444;
+  --chip-active-text: #ffffff;
+  --header-sticky-bg: rgba(13, 8, 8, 0.85);
+  --composer-bg: rgba(13, 8, 8, 0.90);
+  --gate-gradient-from: #0d0808;
+  --gate-gradient-to: #140d0d;
+  --error: #ef4444;
+  --task-count: #c2a8a8;
+  --plus-btn-text: #ef4444;
+  --thinking-text: #c2a8a8;
+  --diff-badge-bg: #221414;
+  --del: #ef4444;
+  --prefs-active-bg: #ef4444;
+  --prefs-active-text: #ffffff;
+}
+
+[data-theme="light"] {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --muted: #737880;
+  --border: #e2e4e8;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.2);
+  --ok: #16a34a;
+  --ok-bg: #ecfdf5;
+  --run: #2563eb;
+  --run-bg: #eff6ff;
+  --remote: #f3e8ff;
+  --remote-text: #7e22ce;
+  --radius: 12px;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --surface-2: #eceff3;
+  --surface-3: #f1f3f6;
+  --surface-4: #e5e8ec;
+  --surface-5: #f8f9fa;
+  --surface-6: #f0f2f5;
+  --surface-7: #f1f3f6;
+  --banner-text: #4b5563;
+  --badge-bg: #eceff3;
+  --badge-text: #4b5563;
+  --pill-bg: #eceff3;
+  --pill-text: #4b5563;
+  --input-bg: #ffffff;
+  --btn-primary-bg: #111827;
+  --btn-primary-text: #ffffff;
+  --btn-outline-border: #cbd5e1;
+  --btn-outline-bg: #ffffff;
+  --chip-bg: #eceff3;
+  --chip-text: #4b5563;
+  --chip-active-bg: #111827;
+  --chip-active-text: #ffffff;
+  --header-sticky-bg: rgba(245, 246, 248, 0.88);
+  --composer-bg: rgba(245, 246, 248, 0.92);
+  --gate-gradient-from: #f8f9fa;
+  --gate-gradient-to: #eceff3;
+  --error: #dc2626;
+  --task-count: #4b5563;
+  --plus-btn-text: #111827;
+  --thinking-text: #4b5563;
+  --diff-badge-bg: #ffffff;
+  --del: #dc2626;
+  --prefs-active-bg: #111827;
+  --prefs-active-text: #ffffff;
 }
 
 :root {
@@ -148,10 +302,67 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .prefs-toggles {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.prefs-section {
+  display: flex;
+  flex-direction: column;
   gap: 6px;
-  justify-content: flex-end;
+  width: 100%;
+}
+
+.prefs-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.prefs-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 0;
+}
+
+.theme-chip.active {
+  border-color: var(--accent);
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--accent), 0 2px 8px -2px var(--accent-glow);
+  font-weight: 600;
+}
+
+.theme-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid transparent;
   flex-shrink: 0;
+}
+
+.theme-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .prefs-segment {
