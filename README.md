@@ -120,7 +120,11 @@ This repository provides an integrated Hermes skill (`skills/hermes-phone-pair/S
 Whenever you are chatting in Hermes Desktop or CLI, simply type:
 > *"Connect my phone"* or *"配对手机"*
 
-Hermes will automatically run the pairing helper and render the QR code image and clickable link directly in the conversation!
+Hermes will automatically run the pairing helper and render the QR code image and clickable link directly in the conversation:
+
+<p align="center">
+  <img src="docs/screenshots/in-chat-pairing.png" alt="In-Chat Phone Pairing" width="560">
+</p>
 
 ---
 
