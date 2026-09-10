@@ -37,7 +37,7 @@ function detectDefaultLocale(): Locale {
   } catch {
     /* ignore */
   }
-  return 'zh'
+  return 'en'
 }
 
 function applyTheme(theme: Theme) {

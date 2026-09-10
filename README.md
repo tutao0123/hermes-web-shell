@@ -1,66 +1,131 @@
 # Hermes Web Shell
 
-**Use your computer's Hermes Agent from your phone. Configure Cloudflare once, open the pairing window, and scan to connect.**
+**Use your computer's Hermes Agent from your phone. Scan a QR code to connect over local Wi-Fi, a free instant tunnel, or your own custom domain.**
 
-A community-maintained companion web app for a locally installed Hermes Agent. Your computer runs Hermes; your phone lets you browse conversations and continue tasks. This is an independent application, not an official Hermes product, plugin, or skill.
+A companion mobile web app for a locally installed Hermes Agent. Your computer runs Hermes; your phone lets you browse conversations, switch workspaces, and execute tasks on the go.
+
+![Connection flow](docs/images/connection-flow.svg)
 
 ## Features
 
-- Browse local conversations grouped by workspace and continue chatting.
-- Open a native Windows pairing window without a desktop browser login.
-- Pair using a single-use QR code, stay signed in for 30 days, and revoke devices.
-- Use a mobile browser with light/dark themes and Chinese/English preferences.
+- **Three flexible connection modes**:
+  1. **Local Wi-Fi (Zero-Config)**: Connect instantly on the same local network using your machine's private IP without purchasing domains or registering accounts.
+  2. **Free Quick Tunnel (TryCloudflare)**: Launch an instant public HTTPS tunnel with one command (`npm run tunnel:quick`) without needing a domain or Cloudflare account.
+  3. **Custom Domain (Cloudflare Tunnel)**: Configure a persistent domain with Cloudflare Zero Trust for 24/7 access from anywhere.
+- **In-Chat & CLI Pairing**:
+  - Ask Hermes directly in chat: *"Connect phone"* (powered by the built-in `hermes-phone-pair` skill) to get a live QR code inside your chat window.
+  - Or run `npm run pair` from the terminal, or double-click `连接手机.vbs` on Windows.
+- **Enhanced Security**:
+  - **Single-device exclusive mode**: Pairing a new phone automatically revokes older sessions.
+  - **Configurable session duration**: Default 7 days (customizable via `SHELL_SESSION_DAYS`).
+  - **Single-use 5-minute QR tokens**: Automatically invalidated upon redemption.
+- **Cyberpunk & Hermes Desktop Aesthetics**:
+  - **Classic Gold (Default)**: Deep obsidian noir with signature Hermes amber/gold accents and glowing borders.
+  - **Mono Minimal**: Pure black-and-white high contrast (Linear/Vercel vibe).
+  - **Cyber Slate**: Midnight space blue with electric cyan highlights.
+  - **Ares Crimson**: Carbon ash with war-crimson accents.
+  - **Daylight**: Clean paper white for daytime outdoor use.
 
-![Computer, tunnel, and phone connection](docs/images/connection-flow.svg)
+---
 
-## Start here
+## Getting Started
 
-| What you need | Guide |
-| --- | --- |
-| First-time installation | [Installation and phone pairing](docs/getting-started.md) |
-| A public domain | [Manual Cloudflare setup](docs/cloudflare.md) |
-| Help with errors | [Troubleshooting](docs/troubleshooting.md) |
-| Configuration and contributing | [Development](docs/development.md) |
+### 1. Install dependencies
 
-### First-time setup
+Ensure you have a working [Hermes Agent](https://github.com/NousResearch/hermes-agent) installation, Node.js 24+, and Git.
 
-You need a working Hermes installation, Git, Node.js 24, and a domain connected to Cloudflare. The native pairing window currently supports Windows only. Other systems can use browser pairing, but full platform compatibility has not been verified.
-
-```powershell
+```bash
 git clone https://github.com/tutao0123/hermes-web-shell.git
 cd hermes-web-shell
 npm ci
+```
+
+### 2. Start the service
+
+```bash
 npm run dev
 ```
 
-Then follow the [setup guide](docs/getting-started.md). **These commands alone do not make the app remotely accessible.**
+The web shell listens on port `5174` across local network interfaces (`0.0.0.0:5174`).
 
-### Everyday use
+---
 
-1. Double-click **`连接手机.vbs`** ("Connect phone") in the project folder.
-2. Scan the window's code with your phone camera and open it in a browser.
-3. Use Hermes. While signed in, open your domain directly next time.
+## How to Connect Your Phone
 
-You can create a desktop shortcut yourself; the repository does not automatically create one. The native window currently uses Chinese labels, with English equivalents explained in the guides.
+### Option A: Local Wi-Fi (Same Network, Zero Setup)
 
-Codes expire after five minutes and work once. Keep the computer awake and online, with the web service and tunnel running. Closing the window does not stop background services.
+Ensure your phone and computer are on the same Wi-Fi network:
 
-## Current scope
+```bash
+npm run pair -- lan
+```
 
-- Cloudflare setup is manual. There is no setup wizard, universal installer, or automatic startup at boot.
-- The backend runs inside Vite. Uploading the static build alone does not provide a working Hermes backend.
-- Real conversations require the local Hermes database and CLI. The interface may fall back to demo data.
-- Connecting another computer does not migrate conversations from an old server.
-- QR codes contain temporary access credentials, not your Cloudflare token or login password. Show them only to devices you intend to authorize.
+Scan the generated QR code or open the displayed `http://192.168.x.x:5174/...` link on your phone.
 
-## Preview
+### Option B: Free Quick Tunnel (No Domain, Anywhere Access)
 
-Historical mobile screenshots; follow the setup guide for current sign-in and pairing behavior.
+If you are away from home and don't own a domain:
 
-<p>
-  <img src="docs/screenshots/phone-03-workspaces.png" alt="Workspace list on a phone" width="250">
-  <img src="docs/screenshots/phone-02-greetings.png" alt="Hermes conversation on a phone" width="250">
-</p>
+```bash
+npm run tunnel:quick
+```
+
+This spins up an instant Cloudflare Quick Tunnel (`*.trycloudflare.com`) and outputs a public pairing QR code.
+
+When finished, stop it anytime with:
+```bash
+npm run tunnel:stop
+```
+
+### Option C: Custom Domain + Cloudflare Tunnel
+
+For permanent remote access, configure `.env.local`:
+
+```dotenv
+SHELL_PUBLIC_URL=https://hermes.yourdomain.com
+```
+
+Then run:
+```bash
+npm run pair
+```
+
+See the [Cloudflare Setup Guide](docs/cloudflare.md) for details on setting up persistent Cloudflare Tunnels and Access policies.
+
+---
+
+## Pairing directly inside Hermes Chat
+
+This repository provides an integrated Hermes skill (`skills/hermes-phone-pair/SKILL.md`).
+
+Whenever you are chatting in Hermes Desktop or CLI, simply type:
+> *"Connect my phone"* or *"配对手机"*
+
+Hermes will automatically run the pairing helper and render the QR code image and clickable link directly in the conversation!
+
+---
+
+## Device Management
+
+View active mobile sessions:
+```bash
+npm run devices
+```
+
+Revoke all devices immediately:
+```bash
+node scripts/pair-cli.mjs clear
+```
+
+---
+
+## Development & Testing
+
+```bash
+npm test         # Run access, token, and pairing test suite
+npm run lint     # Run oxlint checks
+npm run build    # Production build
+```
 
 ## License
 

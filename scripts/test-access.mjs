@@ -17,7 +17,7 @@ test('password login, QR one-use, persistent sessions, revocation and CSRF', asy
   const call = (path, data, cookie = '', requestOrigin = origin) => fetch(origin + path, { method: data ? 'POST' : 'GET', headers: { cookie, ...(data ? { origin: requestOrigin, 'content-type': 'application/json' } : {}) }, body: data ? JSON.stringify(data) : undefined })
   try {
     assert.equal((await call('/api/private')).status, 401)
-    assert.match(await (await call('/')).text(), /连接 Hermes/)
+    assert.match(await (await call('/')).text(), /Connect to Hermes/)
     const localKey = readFileSync(join(dir, 'local-pairing-key.txt'), 'utf8')
     const native = (path, headers = {}) => fetch(origin + path, { method: 'POST', headers: { 'x-hermes-local-key': localKey, 'content-type': 'application/json', ...headers }, body: '{}' })
     assert.equal((await native('/auth/pair', { 'x-hermes-local-key': 'wrong' })).status, 403)

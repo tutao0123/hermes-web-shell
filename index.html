@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -17,9 +17,10 @@
           }
           document.documentElement.setAttribute('data-theme', theme)
           var locale = localStorage.getItem('hermes-web-shell-locale')
-          if (locale === 'en' || locale === 'zh') {
-            document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en'
+          if (locale !== 'zh' && locale !== 'en') {
+            locale = 'en'
           }
+          document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en'
         } catch (e) {}
       })()
     </script>
