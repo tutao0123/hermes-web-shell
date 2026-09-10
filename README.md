@@ -26,6 +26,25 @@ A companion mobile web app for a locally installed Hermes Agent. Your computer r
   - **Ares Crimson**: Carbon ash with war-crimson accents.
   - **Daylight**: Clean paper white for daytime outdoor use.
 
+## Design Philosophy: Pure Simplicity
+
+- **No Bot Setup**: No need to create Telegram bots, manage Discord applications, or configure complex webhooks.
+- **Instant Pairing**: Scan the QR code on your computer, and your phone is immediately authenticated for 7 days.
+- **Portable & Lightweight**: Clean, focused mobile web UI with zero clutter — ideal for continuing coding tasks from anywhere.
+- **Hermes Cyberpunk Aesthetics**: OLED true black with Hermes Gold contours, Mono minimal, and Cyber Slate palettes.
+
+## Preview
+
+<p align="center">
+  <img src="docs/screenshots/phone-workspaces-gold.png" alt="Workspaces & Tasks" width="23%">
+  &nbsp;
+  <img src="docs/screenshots/phone-chat-gold.png" alt="Chat with Golden Bubble" width="23%">
+  &nbsp;
+  <img src="docs/screenshots/phone-themes.png" alt="Theme Selector" width="23%">
+  &nbsp;
+  <img src="docs/screenshots/phone-terminal.png" alt="Terminal Execution" width="23%">
+</p>
+
 ---
 
 ## Getting Started
