@@ -167,9 +167,10 @@ export function accessPlugin(
           const lanIp = getPrimaryLocalIp()
           const lanLink = `http://${lanIp}:${port}`
           let publicOrigin: string | undefined
-          if (publicUrl?.trim()) {
+          const candidateUrl = (typeof data.publicUrl === 'string' && data.publicUrl.trim()) || publicUrl?.trim()
+          if (candidateUrl) {
             try {
-              const parsed = new URL(publicUrl.trim())
+              const parsed = new URL(candidateUrl)
               if (parsed.protocol === 'https:' && !parsed.username && !parsed.password) {
                 publicOrigin = parsed.origin
               }

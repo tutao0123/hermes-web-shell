@@ -12,6 +12,8 @@
     "test": "node scripts/test-access.mjs",
     "pair": "node scripts/pair-cli.mjs pair",
     "devices": "node scripts/pair-cli.mjs devices",
+    "tunnel:quick": "node scripts/quick-tunnel.mjs start",
+    "tunnel:stop": "node scripts/quick-tunnel.mjs stop",
     "preview": "vite preview"
   },
   "dependencies": {
