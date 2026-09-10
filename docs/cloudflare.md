@@ -16,17 +16,9 @@ You can reuse a tunnel dedicated to this computer. When moving from an old serve
 
 In your tunnel's **Overview** tab, locate **Add a connector** in the **Connectors** section.
 
-![Tunnel Overview with Add a connector; tunnel ID redacted](screenshots/cloudflare-overview-redacted.png)
-
-*Redacted, image-tool-edited version of a user-provided dashboard capture. This shows the pre-connection state: **Down** and an empty connector list, not a successful setup.*
-
 ## 2. Install and run the connector
 
-Click **Add a connector** to open **Install and run a connector**. Choose **Windows** and the architecture appropriate for your computer (the example shows **64-bit**).
-
-![Windows connector installation panel with command token redacted](screenshots/cloudflare-install-redacted.png)
-
-*Redacted, image-tool-edited dashboard capture. Copy your own command from Cloudflare, not this image. The token portion is intentionally hidden. **Refresh token** is for credential rotation and is not a required installation step.*
+Click **Add a connector** to open **Install and run a connector**. Choose **Windows** and the architecture appropriate for your computer (for example, **64-bit**). Copy your installation command from the Cloudflare dashboard.
 
 Follow the tunnel's Windows connector instructions on the computer running Hermes. If installed as a system service, let that service manage it instead of starting a duplicate. Wait for the connector to appear online.
 
