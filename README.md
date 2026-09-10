@@ -124,6 +124,8 @@ Hermes will automatically run the pairing helper and render the QR code image an
 
 <p align="center">
   <img src="docs/screenshots/in-chat-pairing.png" alt="In-Chat Phone Pairing" width="560">
+  <br>
+  <em style="color: #8b8f9e; font-size: 0.9em;">✦ Try scanning the demo QR code above with your phone to open this repo! In actual use, it securely connects directly to your own machine running Hermes.</em>
 </p>
 
 ---
