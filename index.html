@@ -9,13 +9,11 @@
     <script>
       (function () {
         try {
+          var VALID_THEMES = ['hermes', 'mono', 'slate', 'ares', 'light']
           var theme = localStorage.getItem('hermes-web-shell-theme')
-          if (theme !== 'light' && theme !== 'dark') {
-            theme =
-              window.matchMedia &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'dark'
-                : 'light'
+          if (theme === 'dark') theme = 'hermes'
+          if (!VALID_THEMES.includes(theme)) {
+            theme = 'hermes'
           }
           document.documentElement.setAttribute('data-theme', theme)
           var locale = localStorage.getItem('hermes-web-shell-locale')

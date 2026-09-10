@@ -1,11 +1,11 @@
 :root,
 [data-theme="hermes"],
 [data-theme="dark"] {
-  --bg: #090a0f;
-  --card: #13141d;
+  --bg: #08090d;
+  --card: #11131c;
   --text: #f3f4f6;
   --muted: #8b8f9e;
-  --border: #232533;
+  --border: rgba(245, 197, 66, 0.28);
   --accent: #f5c542;
   --accent-glow: rgba(245, 197, 66, 0.25);
   --ok: #34d399;
@@ -14,44 +14,44 @@
   --run-bg: rgba(245, 197, 66, 0.15);
   --remote: #3d2428;
   --remote-text: #f0a0a8;
-  --radius: 12px;
-  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-  --surface-2: #191b26;
-  --surface-3: #1f212e;
-  --surface-4: #252838;
-  --surface-5: #151722;
-  --surface-6: #151722;
-  --surface-7: #1f212e;
+  --radius: 14px;
+  --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 0 14px -3px rgba(245, 197, 66, 0.15);
+  --surface-2: #161824;
+  --surface-3: #1b1e2c;
+  --surface-4: #222538;
+  --surface-5: #131520;
+  --surface-6: #131520;
+  --surface-7: #1b1e2c;
   --banner-text: #a8b0bc;
-  --badge-bg: #1f212e;
-  --badge-text: #c5c9d3;
-  --pill-bg: #1f212e;
+  --badge-bg: rgba(245, 197, 66, 0.12);
+  --badge-text: #f5c542;
+  --pill-bg: #1b1e2c;
   --pill-text: #c5c9d3;
-  --input-bg: #13141d;
+  --input-bg: #11131c;
   --btn-primary-bg: #f5c542;
-  --btn-primary-text: #090a0f;
-  --btn-outline-border: #353849;
-  --btn-outline-bg: #13141d;
-  --chip-bg: #191b26;
+  --btn-primary-text: #08090d;
+  --btn-outline-border: rgba(245, 197, 66, 0.4);
+  --btn-outline-bg: #11131c;
+  --chip-bg: #161824;
   --chip-text: #c5c9d3;
   --chip-active-bg: #f5c542;
-  --chip-active-text: #090a0f;
-  --header-sticky-bg: rgba(9, 10, 15, 0.85);
-  --composer-bg: rgba(9, 10, 15, 0.90);
-  --gate-gradient-from: #090a0f;
-  --gate-gradient-to: #151722;
+  --chip-active-text: #08090d;
+  --header-sticky-bg: rgba(8, 9, 13, 0.85);
+  --composer-bg: rgba(8, 9, 13, 0.90);
+  --gate-gradient-from: #08090d;
+  --gate-gradient-to: #131520;
   --error: #f85149;
   --task-count: #c5c9d3;
   --plus-btn-text: #f5c542;
   --thinking-text: #a8b0bc;
-  --diff-badge-bg: #191b26;
+  --diff-badge-bg: #161824;
   --del: #f85149;
   --prefs-active-bg: #f5c542;
-  --prefs-active-text: #090a0f;
-  --bubble-user-bg: #141724;
-  --bubble-user-border: rgba(245, 197, 66, 0.55);
-  --bubble-user-text: #f9fafb;
-  --bubble-user-shadow: 0 2px 14px -2px rgba(245, 197, 66, 0.22);
+  --prefs-active-text: #08090d;
+  --bubble-user-bg: #151828;
+  --bubble-user-border: rgba(245, 197, 66, 0.6);
+  --bubble-user-text: #ffffff;
+  --bubble-user-shadow: 0 3px 16px -2px rgba(245, 197, 66, 0.25);
 }
 
 [data-theme="mono"] {
@@ -535,12 +535,13 @@ button, input, textarea { font: inherit; color: inherit; }
   justify-content: space-between;
   gap: 10px;
   padding: 10px 12px;
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface-3);
   text-align: left;
   cursor: pointer;
   color: inherit;
+  transition: all 0.15s ease;
 }
 .task-list {
   list-style: none;
