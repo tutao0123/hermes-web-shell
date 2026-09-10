@@ -271,6 +271,9 @@ function mapMessages(sessionId: string) {
 
 function chineseError(raw: string, code?: number | null): string {
   const text = raw || ''
+  if (/SESSION_NOT_OWNED|already has a live owner/i.test(text)) {
+    return '该会话正在电脑桌面端打开占用中。请在手机端点击底部「+」新建会话，或在电脑端切换至其他对话。'
+  }
   if (code === 429 || /429|rate.?limit|too many requests/i.test(text)) {
     return 'OpenRouter 免费模型暂时限流（429），请稍后再试。'
   }
